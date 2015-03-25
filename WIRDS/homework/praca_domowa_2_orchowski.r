@@ -21,4 +21,4 @@ ggplot(data = dane_liniowy,
   ylab('Udział‚ (%)') +
   ggtitle('Udział poszczególnych kategorii własności u respondentów') +
   geom_text(aes(label=Kategoria), hjust=0, vjust=2, size = 3) +
-  geom_text(aes(label=y), hjust=2, vjust=1, size =3)
+  geom_text(aes(label=y), hjust=2, vjust=0, size =3)
