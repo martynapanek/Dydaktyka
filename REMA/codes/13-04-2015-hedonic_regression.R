@@ -55,19 +55,21 @@ d <- reg %>%
      med = median(fitted(.$models)),
      n = length(fitted(.$models)))
 
-### hedonic index
-d$m %>%
-  unlist() %>%
+
+
+# hedonic for warsaw ------------------------------------------------------
+
+model <- warsaw %>%
+  mutate(ym = paste0(year,'-',month,'-1'),
+         ymd = ymd(ym),
+         qurter = quarter(ymd,with_year = TRUE)) %>%
+  select(transaction.price,surface,qurter) %>%
+  lm(log(transaction.price) ~ I(sqrt(surface)),data=.) 
+
+
+predict(model,filter(warsaw,year=='2008')) %>%
   exp() %>%
-  data.frame(hedonic_price = .) %>%
-  as_data_frame() %>%
-  mutate(ind = lag(hedonic_price,k=1),
-         index = hedonic_price/ind*100,
-         yearly_index = hedonic_price/474732.3*100,
-         n = unlist(d$n))
-
-
-
+  mean()
 
 
 
