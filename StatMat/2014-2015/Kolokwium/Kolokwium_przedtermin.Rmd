@@ -1,0 +1,260 @@
+---
+title: "Kolokwium - Statystyka matematyczna"
+author: "Maciej Beręsewicz"
+output: pdf_document
+header-includes:
+   - \usepackage{amsmath}
+---
+
+```{r ustawienia,echo=F,message=FALSE,warning=FALSE,error=FALSE}
+library(knitr)
+opts_chunk$set(warning = FALSE, 
+               message = FALSE, 
+               echo = FALSE,
+               eval = FALSE,
+               tidy = FALSE,
+               comment=NA)
+## odkomentowanie !!
+```
+
+Numer Indeksu: ............
+Imię: ...........................
+Nazwisko: ...........................
+
+Grupa: ...................
+Data: ...................
+
+
+**Zadanie 1.** Tygodniową wielkość produkcji baterii w pewnym przybliżeniu można określić rozkładem normalnym o średniej 134 786 i odchyleniu standardowym równym 13 000 sztuk. Znajdź prawdopodobieństwo, że tygodniowa produkcja przekroczy 150 000 sztuk.
+
+```{r zad1dane,results='asis',include=TRUE}
+m <- 134786
+s <- 13000
+x <- 150000
+z <- (150000-m)/s
+wynik <- 1 - pnorm(z)
+
+odp <- '
+*Rozwiązanie:*
+
+$$
+P \\big( X > `r x` \\big) = ?
+$$
+$$
+\\begin{split}
+P \\big( X > `r x` \\big) = \\\\
+& P \\big( \\frac{X-`r m`}{`r s`} > \\frac{`r x` - `r m`}{`r s`} \\big) =\\\\
+& P \\big( Z > `r z` \\big) = 1 - P\\big(Z <= `r z`)=\\\\
+& 1 - \\Phi(`r z`) = 1 - `r pnorm(z)` = `r wynik`
+\\end{split}
+$$
+*Odpowiedź:* Z prawdopodobieństwem `r round(wynik*100,1)` \\% tygodniowa produkcja przekroczy 150 000 sztuk.
+'
+cat(knit(text=unlist(knit_expand(text = odp)),quiet = T))
+```
+
+\newpage
+
+**Zadanie 2.** W celu oszacowania średniego przychodu małych przedsiębiorstw handlowych w Polsce wylosowano próbę 12 firm handlowych zatrudniajacych do 10 osób. Wyniki z próby pozwoliły na oszacowanie: $\bar{x}=25000$, $s=3500$. Zakładając normalność rozkładu, oszacuj metodą przedziałową średnią wielkość przychodu wszystkich firm handlowych w Polsce. Przyjmij poziom ufności 0.93.
+
+
+```{r zad2dane,results='asis',include=TRUE}
+n <- 12
+m <- 25000
+s <- 3500
+ufnosc <- 0.93
+alpha <- 1 - ufnosc
+t_alpha <- qt(1-alpha/2,n-1)
+d <- t_alpha*s/sqrt(n)
+dolna <- round(m-d,2)
+gorna <- round(m+d,2)
+
+odp <- '
+*Rozwiązanie:*
+$$
+\\begin{split}
+P \\big(\\bar{x} - t_{1-\\alpha/2,n-1}\\frac{s}{\\sqrt{n}} < m < \\bar{x} + t_{1-\\alpha/2,n-1}\\frac{s}{\\sqrt{n}}\\big) = 1-\\alpha \\\\ 
+P \\big( `r m` - `r t_alpha`\\frac{`r s`}{\\sqrt{`r n`}} < m < `r m` + `r t_alpha`\\frac{`r s`}{\\sqrt{`r n`}} \\big) = 1-`r alpha` \\\\ 
+P \\big( `r dolna` < m < `r gorna` \\big) = `r ufnosc` 
+\\end{split}
+$$
+
+*Odpowiedź:* Z prawdopodobieństwem `r ufnosc` powyższy przedział pokrywa nieznaną średnią w przychodów małych przedsiębiorstw w Polsce.
+
+'
+cat(knit(text=unlist(knit_expand(text = odp)),quiet = T))
+```
+
+\newpage
+
+**Zadanie 3.** Firma jest przekonana, że jej udział w rynku proszków do prania wynosi ok 14\%. W celu sprawdzenia tego przypuszczenia wylosowano próbę liczącą 514 klientów kupujących proszki do prania. Jaki przyjęty został maksymalny błąd szacunku przy współczynniku ufności 0.97. 
+
+```{r zad3dane,results='asis',include=TRUE}
+p <- 0.14
+n <- 514
+ufnosc <- 0.97
+alpha <- 1-ufnosc
+z_alpha <- qnorm(1-alpha/2)
+d <- sqrt( z_alpha^2*p*(1-p) / n)
+
+odp <- '
+*Rozwiązanie:*
+
+Należy przekształcić wzór do następującej postaci:
+
+$$
+d =  \\sqrt{\\frac{z_{\\alpha/2}^2 \\times p \\times (1-p)}{n}}.
+$$
+
+*Odpowiedź:* Firma przyjęła maksymalny błąd szacunku wynoszący `r round(d,4)`.
+'
+
+cat(knit(text=unlist(knit_expand(text = odp)),quiet = T))
+```
+
+\newpage
+
+**Zadanie 4.** W zakładzie X zatrudniającym 500 pracowników wylosowano do próby 20 pracowników fizycznych i 25 umysłowych w celu zbadania natężenia zjawiska rocznej absencji w pracy. Otrzymano następujące parametry charakteryzujące zjawisko:
+
+
+Pracownicy fizyczni | Pracownicy umysłowi
+--------------------|--------------------
+$\bar{x}_1 = 25$ | $\bar{x}_2 = 28$
+$V_1 =  0.4$ | $V_2 =  0.3$
+
+Zakładając poziom istotności 0.05 zweryfikuj hipotezę, że pracownicy umysłowi przeciętnie częsciej są nieobecni w pracy niż pracownicy fizyczni. Przy wyborze testu załóż równość wariancji w obydwu populacjach.
+
+```{r zad4dane,results='asis',include=TRUE}
+# rozwiązanie
+m_1 <- 25
+m_2 <- 28
+v_1 <- 0.4
+v_2 <- 0.3
+s_1 <- m_1*v_1
+s_2 <- m_2*v_2
+n_1 <- 20
+n_2 <- 25
+df <- n_1+n_2-2
+alpha <- 0.05
+sp2 <- ( (n_1-1)*s_1^2 + (n_2-1)*s_2^2 ) / df
+t_emp <- (m_1 - m_2) / sqrt(sp2/n_1+sp2/n_2)
+t_kryt <- qt(alpha,df)
+# rozwiązanie
+
+odp <- '
+*Rozwiązanie*:
+
+W pierwszej kolejności musimy zapisać układ hipotez:
+
+* H0: $m_1 = m_2$
+* H1: $m_1 < m_2$
+
+gdzie $m_1$ średnia dla pracowników fizycznych, $m_2$ średnia dla pracowników umysłowych.
+
+Korzystam ze wzoru
+$$
+t = \\frac{\\bar{x_1}-\\bar{x_2}}{\\sqrt{ \\frac{s_p^2}{n_1} + \\frac{s_p^2}{n_2} }}
+$$
+gdzie $s_p^2= \\frac{(n_1-1)s^2_1 + (n_2-1)s^2_2}{n_1-n_2-2}$
+
+Podstawiając do wzoru otrzymujemy:
+
+$$
+t = \\frac{`r m_1`- `r m_2`}{\\sqrt{ \\frac{`r sp2`}{`r n_1`} + \\frac{`r sp2`}{`r n_2`}}} = `r t_emp`
+$$
+
+*Odpowiedź:* Odczytując z tablic otrzymuję wartość krytyczną równą `r t_kryt`. Porównując do wartości empirycznej (t) mogę stwierdzić, że nie ma podstaw do odrzucenia hipotezy zerowej (t > t_kryt). Oznacza to, że średnie obydwu grup pracowników nie różnią się istotnie statystycznie.
+
+'
+
+cat(knit(text=unlist(knit_expand(text = odp)),quiet = T))
+```
+
+\newpage
+
+**Zadanie 5.** Na podstawie 141 losowo zapytanych pracowników pewnej firmie uzyskano następujące wyniki. Stosując test niezależności $\chi^2$ sprawdź czy pomiędzy wykształceniem, a tym czy w ciągu ostatnich 3 lat osoba brała udział w szkoleniach istnieje zależność.  Przyjmij poziom istotności $\alpha$= 0,05.
+
+Wykształcenie | Udział w szkoleniach | Brak udziału w szkoleniach
+--------------|----------------------|---------------------------
+Zawodowe | 18 | 17
+Średnie i wyższe | 72 | 43
+
+
+```{r zad5dane,results='asis',include=TRUE}
+# dane
+k <- 2
+r <- 2
+alpha <- 0.05
+a <- 18
+b <- 17
+c <- 72
+d <- 43
+n <- sum(a,b,c,d)
+df <- (k-1)*(r-1)
+chi_emp <- n*(a*d-b*c)^2/ ( (a+b)*(c+d)*(a+c)*(b+d) ) 
+chi_kry <- qchisq(1-alpha,df)
+
+# rozwiązanie
+odp <-'
+*Rozwiązanie:*
+
+W pierwszej kolejności musimy zapisać układ hipotez:
+
+* H0: Zmienne są niezależne
+* H1: Zmienne są zależne
+
+W związku z tym, że mamy przypadek tabeli $2 \\times 2$ stosujemy uproszczony wzór na statystykę testową $\\chi^2$ określony poniżej:
+
+$$
+\\chi^2 = \\frac{ n\\times(a\\times d-b\\times c)^2 }{(a+b)\\times(c+d)\\times(a+c)\\times(b+d)}
+$$
+
+Podstawiając dane otrzyujemy
+$$
+\\chi^2 = \\frac{ `r n`{\\times}(`r a`{\\times}`r d`-`r b`{\\times} `r c`)^2 }{(`r a`+`r b`){\\times}(`r c`+`r d`)\\times(`r a`+`r c`)\\times(`r b`+`r d`)} = `r chi_emp`
+$$
+
+*Odpowiedź:* Odczytując z tablic wartość krytyczną dla rozkładu $\\chi^2$ z `r df` stopniami, która jest równa `r chi_kry` możemy stwierdzić, że nie ma zależności między tymi zmiennymi.
+'
+
+cat(knit(text=unlist(knit_expand(text = odp)),quiet = T))
+```
+
+\newpage
+
+
+**Zadanie 6.** Na podstawie próby N=100 oszacowano współczynnik korelacji $r=0.85$ między dochodami, a wydatkami mieszkańców Poznania w 2013 roku. Przyjmując poziom istotności $0.01$ zweryfikuj hipotezę mówiącą o tym, że korelacja jest dodatnia.
+
+
+```{r zad6dane,results='asis',include=TRUE}
+n <- 100
+r <- 0.85
+alpha <- 0.01
+t <- sqrt(r^2/(1-r^2))*sqrt(n-2)
+t_kryt <- qt(1-alpha/2,n-2)
+
+odp <-'
+*Rozwiązanie:*
+
+W pierwszej kolejności musimy zapisać układ hipotez:
+
+* H0: $\\rho = 0$
+* H1: $\\rho > 0$
+
+Aby zweryfikować tę hipotezę należy obliczyć statystykę testową t określoną wzorem:
+
+$$
+t = \\sqrt{\\frac{r^2}{1-r^2}}\\sqrt{n-2}
+$$
+
+podstawiąjąc otrzymujemy:
+$$
+t = \\sqrt{\\frac{`r r`^2}{1-`r r`^2}}\\sqrt{`r n`-2} = `r t`.
+$$
+
+*Odpowiedź:* Następie odczytując z tablic wartość krytyczną rozkładu t-studenta przy $\\alpha=`r alpha`$ i `r n-2` stopniach swobody otrzymujemy wartość `r t_kryt`. Porównując statystykę do wartości krytycznej możemy stwierdzić, że należy odrzucić hipotezę zerową na rzecz alternatywnej.
+'
+
+cat(knit(text=unlist(knit_expand(text = odp)),quiet = T))
+```
+

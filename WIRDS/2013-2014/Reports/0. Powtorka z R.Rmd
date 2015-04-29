@@ -1,0 +1,285 @@
+Zadania powtórkowe
+========================================================
+
+Proszę o wykonanie poniższych zadań powtórkowych do *10 marca 2014*. Kod *R* (plik z rozszerzeniem .R) proszę załączać przez portal moodle [link](http://moodle.ue.poznan.pl/mod/assignment/view.php?id=98427) w układzie, który przedstawiony jest poniżej. Proszę wpisywać komentarze w każdej linii.
+
+```{r opcje,echo=FALSE}
+opts_chunk$set(results='hide',eval=F,echo=F)
+```
+
+```{r kod,results='hide',echo=TRUE}
+##############################
+
+### zadanie 1 - rozwiązanie
+
+##############################
+### przypusuję wartośc 10 do obiektu A
+A<-10
+### sprawdzam typ zmiennej
+class(A)
+```
+
+**PLIK PROSZĘ OPISAĆ W NASTĘPUJĄCY SPOSÓB -- NAZWISKO_NRINDEKSU_ZAD_0.R. Pliki, które będą opisane inaczej NIE BĘDĄ PRZE MNIE SPRAWDZANE!!**
+
+### Zadanie 1
+
+Proszę zainstalować następujące pakiety:
+
+* ggplot2
+* reshape2
+* data.table
+* RColorBrewer
+
+```{r zad1}
+install.packages(c('ggplot2','reshape2','data.table','RColorBrewer'))
+```
+### Zadanie 2
+
+Proszę utworzyć zmienną A, która przyjmie wartość 'PIERWSZA ZMIENNA'. Następnie proszę sprawdzić jakiego typu jest ta zmienna (podpowiedz: sprawdzanie klasy). 
+
+```{r zad2}
+A<-'PIERWSZA ZMIENNA'
+class(A)
+```
+### Zadanie 3 
+Proszę utworzyć następujące wektory:
+* 1,1,1,1,1,1 (6 jedynek, na dwa sposoby).
+* 1,2,...., 100 (wartości od 1 do 100, na dwa sposoby).
+* wektor1, wektor2, ..., wektor200 (wartości tekstowe, na dwa sposoby, podpowiedź: funkcja paste).
+* 5, 10, 15, 20, ..., 500 (podpowiedź: funkcja seq).
+
+```{r zad3}
+zad3a<-rep(1,6)
+zad3a<-numeric(6)+1
+zad3a<-c(1,1,1,1,1,1)
+zad3b<-1:100
+zad3b<-c(1:100)
+zad3b<-seq(1,100,1)
+zad3c<-paste('wektor',1:200,sep='')
+zad3c<-paste0('wektor',1:200)
+zad3d<-seq(5,500,5)
+zad3d<-1:100*5
+```
+### Zadanie 4
+
+Proszę stworzyć następujące obiekty: 
+
+* macierz o wymiarach 10 x 3, która będzie wypełniona samymi 0.
+* macierz, która będzie miała wektor wejściowy 1:10 i wymiary 2x5. Dane mają być wczytywane wg wierszy.
+* pusty data.frame (bez żadnych wartości).
+* data.frame, który będzie składał się z 3 kolumn:
+  * ID - wektor od 1 do 10.
+  * NAZWA - wektor składający się z elementów a1, a2, ..., a10 (wektor tekstowy).
+  * TEST - wektor składający się z elementów równych 1.
+* listę składającą się ze wszystkich elementów, które zostały zbudowane w tym zadaniu. 
+
+```{r zad4}
+zad4a<-matrix(0,nrow=10,ncol=3)
+zad4b<-matrix(1:10,nrow=2,ncol=5,byrow=T)
+zad4c<-data.frame()
+zad4d<-data.frame(ID=1:10,NAZWA=paste0('a',1:10),TEST=1)
+zad4e<-list(a=zad4a,b=zad4b,c=zad4c,d=zad4d)
+```
+
+### Zadanie 5
+
+Proszę stworzyć wektor, który będzie składał się z: 20 wartości 1, 35 wartości 2 oraz 50 wartości 3. Następnie na podstawie tego wektora proszę stworzyć zmienną fc, która będzie miała klasę *factor* oraz będzie przyjmowała następujące etykiety (dla podanych wartości):
+
+* 1 = MAŁO
+* 2 = ŚREDNIO
+* 3 = DUŻO
+
+Proszę zastosować odpowiednią funkcję sprawdzającą czy zmienna jest typu *factor* oraz jakie etykiety w tej zmiennej występują (jedna funkcja).
+
+```{r zad5}
+zad5a<-rep(c(1,2,3),times=c(20,35,50))
+zad5b<-factor(zad5a,levels=c(1,2,3),labels=c('MAŁO','ŚREDNIO','DUŻO'))
+is.factor(zad5b)
+levels(zad5b)
+```
+
+### Zadanie 6 
+
+Przed wykonaniem tego zadania proszę wpisać poniższe polecenie.
+
+```{r}
+set.seed(1234)
+```
+
+Proszę stworzyć wektor o długości 20, który jest wynikiem losowania (ze zwracaniem) z wektora o wartościach 1 do 10.
+
+Następnie proszę odpowiedzieć na następujące pytania.
+* Które elementy wektora równe są 10 (pozycja elementów)?
+* Które elementy wektora równe są 2 lub 3 lub 5?
+* Które elementy wektora są większe od 8? 
+* Ile jest elementów, które są równe 1? 
+* Ile jest elementów, których wartości są większe od 9?
+* Ile jest unikalnych wartości w tym wektorze?
+
+Proszę zastosować funkcję, która zwróci długość stworzonego wektora.
+
+```{r zad6}
+set.seed(1234)
+zad6a<-sample(x=1:10,size=20,replace=T)
+which(zad6a==10)
+which(zad6a %in% c(2,3,5))
+which(zad6a>8)
+sum(zad6a==1)
+sum(zad6a>9)
+length(unique(zad6a))
+length(zad6a)
+```
+### Zadanie 7 
+
+Proszę usunąć wektory zadeklarowane w zadaniu 3 z przetrzeni roboczej (tj. z pamięci programu). Następnie odpowiednim poleceniem zapisać obecną przestrzeń roboczą do pliku o rozszerzeniu *.RData*.
+
+```{r zad7}
+rm(zad3a,zad3b,zad3c,zad3d)
+save.image('zad7.RData')
+```
+### Zadanie 8 
+
+Z folderu *WIRDS/DataSets* znajdującego się na *GITHUB* proszę wczytać plik tekstowy o nazwie zadanie5.txt (uwaga proszę sprawdzić jakie argumenty należy podać w funkcji wczytującej zbiór danych tj. proszę przyjrzeć się plikowi przed wczytaniem do R). Zbiór proszę przypisać do obiektu o nazwie **dane**. Opis zbioru znajdą Państwo na samym końcu.
+
+Następnie proszę sprawdzić następujące elementy:
+
+* klasę obiektu,
+* liczbę wierszy (2 sposoby),
+* liczbę kolumn (2 sposoby),
+* nazwy zmiennych,
+* klasy poszczególnych kolumn,
+* proszę stworzyć podsumowanie wszystkich kolumn.
+
+```{r zad8}
+dane<-read.table('/home/berenz/Dokumenty/Projekty/Projekty_R/UNIVERSITY/Course Materials/WIRDS/DataSets/zadanie5.txt',
+                 sep='|',header=T,dec=',')
+class(dane)
+nrow(dane)
+dim(dane)[1]
+ncol(dane)
+dim(dane)[2]
+names(dane)
+sapply(dane,class)
+summary(dane)
+```
+### Zadanie 9 
+
+Mając obiekt **dane** proszę wykonać następujące działania:
+
+* utworzyć nową zmienną o nazwie *mpg2*, która będzie kwadratem zmienne *mpg*.
+* utworzyć zmienną, która będzie przyjmowała wartość równą 1, jeżli *mpg* przyjmować będzie wartości powyżej swojej średniej.
+* proszę utworzyć obiekt o nazwie *SrednieKolumn*, który będzie przetrzymywał wartości równe średnim kolumnowym (jedna funkcja).
+* proszę zmienić typ kolumny *am* (Transmission) na factor, który przyjmuje wartości: 0 = 'Automatyczna', 1 = 'Manualna'.
+* proszę utworzyć zmienną *mpg_cyl* będącą ilorazem zmiennej *mpg* oraz *cyl*.
+
+```{r zad9}
+### użyjemy funkcji within
+SrednieKolumn<-colMeans(dane)
+dane<-within(dane,{
+  mpg2<-mpg^2
+  flag<-mpg>mean(mpg)
+  am<-factor(am,levels=c(0,1),labels=c('Automatyczna','Manualna'))
+  mpg_cyl<-mpg/cyl
+})
+```
+
+### Zadanie 10
+
+Mając obiekt **dane** proszę wykonać następujące działanie (na tym obiekcie):
+
+Proszę pogrupować zmienną *disp* (tworząc nową zmienną *dispGrouped*) w następujące grupy (podpowiedź: funkcja cut):
+
+  * 1 = poniżej kwartyla 1 -- proszę nadać etykietę "poniżej Q1"
+  * 2 = między kwartylem 1 i medianą -- proszę nadać etykietę "<Q1, Me)"
+  * 3 = między medianą a kwartylem 3 -- proszę nadać etykietę "<Me, Q3)"
+  * 4 = powyżej kwartyla 3 -- prosze nadać etykietę "pow. Q3"
+
+```{r zad10}
+kwan<-quantile(dane$disp,probs=c(0.25,0.5,0.75))
+dane$dispGrouped<-cut(dane$disp,
+                      breaks=c(-Inf,kwan[1],kwan[2],kwan[3],Inf),
+                      labels=c('poniżej Q1','<Q1,Me)','<Me, Q3)','Q3 i wyżej'))
+```
+
+### Zadanie 11
+
+Mając obiekt **dane** proszę wykonać następujące działanie:
+
+Proszę policzyć średnią zmiennej *mpg* według zmiennej *am* (Transmission) (co najmniej dwa sposoby).
+
+```{r zad11}
+tapply(dane$mpg,dane$am,mean)
+aggregate(mpg~am,dane,mean)
+by(dane$mpg,dane$am,mean)
+```
+### Zadanie 12
+
+Proszę zagregować data.frame **dane** tak aby otrzymać średnie wartości dla wszystkich zmiennych według zmiennej *am* (Transmission) (jedna funkcja).
+
+```{r Zad12}
+aggregate(.~am,dane,mean)
+```
+### Zadanie 13
+
+Mając obiekt **dane** proszę wykonać następujące działanie:
+
+* proszę policzyć korelację miedzy wszystkimi zmiennymi w zbiorze danych (korelację pearsona oraz spearmana). Wynik proszę zapisać do zbioru danych. Następnie wszystkie wartości proszę zaokrąglić do dwóch miejsc po przecinku.
+
+Proszę sprawdzić hipotezę o istnieniu zależności liniowej między zmienną mgp (Miles/(US) gallon) a disp (Displacement (cu.in.).
+
+```{r zad13}
+cormat<-cor(subset(dane,select=-am))
+cormat<-round(cormat,2)
+cor.test(dane$mpg,dane$disp)
+```
+### Zadanie 14
+
+Proszę wykonać histogram zmiennej *mpg*.
+
+```{r zad14}
+hist(dane$mpg)
+```
+
+### Zadanie 15
+
+Proszę zbudować model regresji dla całego zbioru **dane**. Jako zmienną objaśnianą proszę przyjąć liczbę przejechanych mil na jednym galonie (mpg - Miles/(US) gallon) natomiast jako objaśniającą liczbę cylindrów (cyl - Number of cylinders). Czy współczynnik kierunkowy jest istotnie różny od zera? Ile procent zmienności liczby przejechanych mil wyjaśnił zbudowany model regresji?
+
+```{r zad15}
+zad15a<-lm(mpg~cyl,data=dane)
+summary(zad15a)
+round(summary(zad15a)$coefficients[2,],2)
+summary(zad15a)$r.squared
+```
+### Zadanie 16
+
+Proszę przeliczyć zmienną określającą liczbę przejechanych mil na jednym galonie na liczbę kilometrów na jednym litrze. 
+
+```{r}
+galon_l<-3.78541178
+mila_km<-1.609344
+dane$mpg*galon_l/mila_km
+```
+OPIS ZBIORU 
+----
+
+```{r desc,eval=FALSE,tidy=FALSE}
+Motor Trend Car Road Tests
+
+Description
+
+The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973–74 models).
+
+A data frame with 32 observations on 11 variables.
+
+[, 1]   mpg	 Miles/(US) gallon
+[, 2]	 cyl	 Number of cylinders
+[, 3]	 disp	 Displacement (cu.in.)
+[, 4]	 hp	 Gross horsepower
+[, 5]	 drat	 Rear axle ratio
+[, 6]	 wt	 Weight (lb/1000)
+[, 7]	 qsec	 1/4 mile time
+[, 8]	 vs	 V/S
+[, 9]	 am	 Transmission (0 = automatic, 1 = manual)
+[,10]	 gear	 Number of forward gears
+[,11]	 carb	 Number of carburetors
+```

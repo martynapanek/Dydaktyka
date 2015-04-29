@@ -1,0 +1,126 @@
+---
+title: "Data Quality"
+author: "Maciej Beręsewicz"
+date: "19 Apr 2015"
+output: html_document
+---
+
+# Missing data analysis and imputation
+
+Material contains basic information about missing data analysis and imputation. We start with installing the following packages
+
+```{r install_packages,echo=TRUE,warning=FALSE, message=FALSE, error=FALSE}
+library(mi) ### visualisation of missing data patterns (and multiple imputation)
+library(Hmisc) ### impute and na.pattern function
+library(VIM) ### visualisation of missing data, knn imputation
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(readxl)
+library(stringi)
+library(lubridate)
+```
+
+Now read data from the Register of Prices and Values
+
+```{r read_data_xlsx,echo=TRUE}
+fname <- '~/Documents/Uczelnia/Rozne/GeoPoz - dane/ZG-OUG.41021.2.2.2015/Lokale_rynek_wtórny_2008.xls'
+excel_sheets(fname)
+dsin <- read_excel(fname,skip=2)
+```
+
+Check what types of dwellings we have in the data
+
+```{r check_dwellings}
+dsin <- dsin %>%
+  rename(primary_function = `Funkcja podstawowa lokalu`)
+dsin %>% count(primary_function)
+```
+
+We are interested in 'Mieszkalny' which is (residential) dwelling. 
+
+```{r filter_dwellings}
+dwellings <- dsin %>% 
+  filter(stri_trim_both(primary_function) == 'Mieszkalny') %>%
+  dplyr::select(`Nr transakcji`:`Cena za nieruchomość [PLN]`,
+                `Adres i nr lokalu`,`Udział w prawie do lokalu`,
+                `Liczba izb`:`Cena m2 lokalu [PLN]`) %>%
+  rename(trans_id = `Nr transakcji`,
+         trans_date  = `Data transakcji`,
+         price_trans = `Cena transakcji [PLN]`,
+         estate_id = `Nieruchomość`,
+         estate_price = `Cena za nieruchomość [PLN]`,
+         dwelling_address = `Adres i nr lokalu`,
+         dwellings_rooms = `Liczba izb`,
+         dwelling_floor_area = `Powierzchnia lokalu [m2]`,
+         dwelling_floor_number = `Kondygnacja`,
+         dwellong_assoc_facilities = `Liczba pomieszczeń przynależn.`,
+         dwelling_assoc_facilities_flor_area = `Powierzchnia pom. przyn. [m2]`,
+         dwelling_price = `Cena za lokal [PLN]`,
+         dwelling_price_mw = `Cena m2 lokalu [PLN]`,
+         participation_right = `Udział w prawie do lokalu`)
+  
+```
+
+
+Change type of columns to see the missing values
+
+```{r type_conversion}
+dwellings <- dwellings %>%
+  mutate_each(funs(as.numeric),
+              price_trans,estate_price,dwellings_rooms:dwelling_price_mw) %>%
+  mutate(trans_date = dmy(trans_date))
+summary(dwellings)
+```
+
+Check missing data pattern
+
+```{r missing_data_pattern}
+dwellings %>% 
+  dplyr::select(price_trans,estate_price,
+                dwellings_rooms,dwelling_floor_area,dwelling_floor_number,
+                dwelling_price,dwelling_price_mw) %>%
+  na.pattern()
+```
+
+and visualise
+
+```{r missing_data_pattern2}
+dwellings %>% 
+  dplyr::select(price_trans,estate_price,
+                dwellings_rooms,dwelling_floor_area,dwelling_floor_number,
+                dwelling_price,dwelling_price_mw) %>%
+  aggr() %>%
+  summary()
+```
+
+Check whether the floor missing vary in time
+
+```{r floor_missing}
+dwellings %>%
+  mutate(ym = paste0(year(trans_date),'-',month(trans_date))) %>%
+  group_by(ym) %>%
+  summarise(rooms_miss = sum(is.na(dwelling_floor_number)),
+            number_trans = n(),
+            perc = rooms_miss/number_trans) %>%
+  ungroup() %>%
+  mutate(ym=paste0(ym,'-1'),
+         ym = ymd(ym)) %>%
+  arrange(ym)
+```
+
+Check whether the same flats have missing data
+
+```{r}
+dwellings %>% count(estate_id, sort=T)
+dwellings %>%
+  filter(estate_id == 'PO1P/00189541/6') 
+```
+
+Check duplicates (without trans id)
+
+```{r duplicates}
+dwellings[duplicated(dwellings[,-1]),]
+```
+
+

@@ -1,0 +1,58 @@
+Writing function in R
+========================================================
+
+This document is on writing function in R. It contains elements:
+* defining arguments
+* passing arguments to function
+* checking arguments
+* validation and stoping
+* errors and warnings
+* useful functions (parse, eval,substitute, deparse, args, match.call,flush.console())
+
+In this tutorial we would like to make function that test correlation and procudes heat map using ggplot2 package. For this we need to install following packages: ggplot2, reshape2. We would like use also non-standard correlation tests that were discussed in [this post](http://smarterpoland.pl/index.php/2014/02/korelacje/) @smarterpoland.pl.
+
+* energy
+* HHG
+* minerva
+* Hmisc
+
+```{r instalingpackages,eval=F}
+install.packages(c('rococo','energy','HHG','minerva','Hmisc'))
+```
+
+```{r loadingPackages,echo=FALSE,warning=F,error=FALSE}
+library(energy)
+library(HHG)
+library(minerva)
+library(Hmisc)
+```
+
+1. Defining arguments
+---------------
+
+For simple correlation we could use cor function (to test significance cor.test). First we need to load data.
+
+```{r loadData}
+load("~/Dokumenty/Projekty/Projekty_R/UNIVERSITY/Course Materials/REAL ESTATE/DataSets/RData/realEstatesKWW.RData")
+### subset only to Wroclaw
+Wroc<-realEstatesKWW[realEstatesKWW$city=='Wroclaw',]
+```
+
+Check correlation using cor function
+
+```{r}
+names(Wroc)
+cor(Wroc[,c('nRooms','surface','apprPrice','appPriceM2')],method='spearman')
+## this code also works cor(Wroc[,c('nRooms','surface','apprPrice','appPriceM2')],method='s')
+cor(Wroc[,c('nRooms','surface','apprPrice','appPriceM2')],method='pearson')
+```
+
+
+
+
+
+
+
+
+
+

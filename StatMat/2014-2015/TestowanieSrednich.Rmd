@@ -1,0 +1,136 @@
+---
+title: "Testowanie średnich - jedna średnia"
+author: "Maciej Beręsewicz"
+date: "26.11.2014"
+output: pdf_document
+---
+
+```{r tplot,echo=FALSE}
+t_dens_auc <- function(n,t_kr,t_emp,xtext=0){
+  library(ggplot2)
+  library(ggthemes)
+  
+  den_curve <- data.frame(x=seq(-5,5,length=100),
+                          y=dt(seq(-5,5,length=100),n-1))
+  
+  p <- qplot(data=den_curve,
+             x=x,
+             y=y,
+             geom='line') +
+    geom_ribbon(data=subset(den_curve, x > t_kr),
+                aes(ymax=y,ymin=0),
+                fill='red',
+                colour=NA,
+                alpha=0.5) +
+    geom_point(aes(x=t_emp,
+                   y=0),
+               shape=20,
+               size=3)+
+    annotate('text',
+             x=t_emp+xtext,
+             y=0.2,
+             label=paste0('Wartość\nstatystyki\nwynosi=',
+                          round(t_emp,2),
+                          '\ni jest \noznaczona\nczarnym kółkiem'),
+             size=3,
+             fontface=3,
+             family='serif') +
+    ylab('Gęstość') +
+    xlab('') + 
+    theme_tufte()
+  return(p)
+}
+
+```
+
+*Zadanie 1*. Przypuszcza się, że średnie miesięczne zarobki pracowników pewnego dużego przedsiębiorstwa przekraczają 3000 zł brutto. Dla 8 losowo wybranych pracowników uzyskano następujące dane (w zł): 3500, 3200, 3000, 4000, 3300, 3800, 4200, 3400. Przyjmując, że rozkład płac pracowników jest normalny zweryfikuj tę hipotezę przyjmując $\alpha$ = 0.05.
+
+
+```{r zad1,echo=FALSE}
+dane <- c(3500, 3200, 3000, 4000, 3300, 3800, 4200, 3400)
+m <- mean(dane)
+s <- sd(dane)
+n <- length(dane)
+alpha = 0.05
+m0 <- 3000
+t_kr <- qt(1-alpha,n-1)
+t_emp <- (m-m0)/s*sqrt(n)
+```
+
+W pierwszym kroku zapisujemy hipotezy:
+
+* H0: $\mu \neq `r m0`$
+* H1: $\mu > `r m0`$
+
+Aby zweryfikować hipotezę musimy obliczyć statystykę krytyczną określoną wzorem:
+
+$$
+t = \frac{\bar{X}-\mu_0}{s}\sqrt{n}.
+$$
+
+Natomiast weryfikujemy hipotezę porównując wartość statystyki testowej do wartości krytycznej określonej następująco.
+
+$$
+t_{kr} = t_{1-\alpha, n-1}
+$$
+
+Szukamy wartości dla $1-\alpha$ dlatego, że badana hipoteza alternatywna jest jednostronna (pojawia się większe). Podstawiając wartości do wzoru dla dla statystyki $t$ otrzymujemy:
+
+$$
+t = \frac{`r m`-`r m0`}{`r s`}\sqrt{`r n`} = `r round(t_emp,2)`.
+$$
+
+W związku z tym porównując do wartości krytycznej $t > t_{kr}$ odpowiadamy, że należy odrzucić hipotezę zerową ponieważ wartość statystyki jest większa od wartości krytycznej. Możemy przedstawić to również graficznie.
+
+
+```{r zad1grahics,warning=FALSE,echo=FALSE,dev='CairoPDF',fig.width=6,fig.height=3}
+t_dens_auc(n,t_kr,t_emp)
+
+```
+
+\newpage
+
+*Zadanie 2*. Czy na poziomie istotności 0,05 można twierdzić, ze przeciętna liczba jednostek konsumpcyjnych w pracowniczych gospodarstwach domowych jest większa od 2,5, jeśli na podstawie próby liczącej 26 gospodarstw domowych otrzymano, ze:
+
+* średnia liczba jednostek konsumpcyjnych wynosi 2,65 ,
+* jej względna dyspersja równa jest 40\%?.
+
+```{r zad2dane,echo=FALSE}
+m <- 2.65
+vx <- 0.4
+s <- m*vx
+alpha <- 0.05
+m0 <- 2.5
+n <- 26
+t_kr <- qt(1-alpha,n-1)
+t_emp <- (m-m0)/s*sqrt(n)
+```
+
+W pierwszym kroku zapisujemy hipotezy:
+
+* H0: $\mu \neq `r m0`$
+* H1: $\mu > `r m0`$
+
+Aby zweryfikować hipotezę musimy obliczyć statystykę krytyczną określoną wzorem:
+
+$$
+t = \frac{\bar{X}-\mu_0}{s}\sqrt{n}.
+$$
+
+Natomiast weryfikujemy hipotezę porównując wartość statystyki testowej do wartości krytycznej określonej następująco.
+
+$$
+t_{kr} = t_{1-\alpha, n-1}
+$$
+
+Szukamy wartości dla $1-\alpha$ dlatego, że badana hipoteza alternatywna jest jednostronna (pojawia się większe). Z danych wyliczamy, że $s=`r s`$. Podstawiając wartości do wzoru dla dla statystyki $t$ otrzymujemy:
+
+$$
+t = \frac{`r m`-`r m0`}{`r s`}\sqrt{`r n`} = `r round(t_emp,2)`.
+$$
+
+W związku z tym porównując do wartości krytycznej $t > t_{kr}$ odpowiadamy, że nie należy odrzucić hipotezę zerową ponieważ wartość statystyki jest mniejsza od wartości krytycznej. Możemy przedstawić to również graficznie.
+
+```{r zad2grahics,warning=FALSE,echo=FALSE,dev='CairoPDF',fig.width=6,fig.height=3}
+t_dens_auc(n,t_kr,t_emp,xtext=2)
+```

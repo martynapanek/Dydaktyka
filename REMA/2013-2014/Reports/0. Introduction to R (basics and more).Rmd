@@ -1,0 +1,190 @@
+Real Estate Market Analysis -- Introduction to R (basics and more)
+========================================================
+
+1. Basics classes in R
+---------------
+
+In R everything is object! It means that we can operate on objects, make new objects or change existing objects. In basic R most common classes are:
+
+* character
+* numeric
+* factor
+* matrix
+* array
+* data.frame
+* list
+
+Each of this classes have methods that are created to manage or change them (eg. print, summary, class). In order to create object in R we should use symbol '<-' to assign value to given name. Below please find code to assign each of this objects.
+
+```{r classes}
+### create character object
+a<-'test character vector'
+class(a)
+### create numeric object
+b<-numeric(10)
+b
+class(b)
+### create factor object
+c<-factor(c(1,2,3),levels=c(1,2,3),labels=c('yes','no',"dont't know"))
+class(c)
+### create matrix
+d<-matrix()
+d
+class(d)
+### create data frame
+e<-data.frame(x=numeric(100),y='test value')
+head(e)
+class(e)
+### create list (useful for simulations as hash table)
+f<-list(a=10,b=20)
+f
+class(f)
+```
+
+
+2. Basic functions to working in R
+---------------
+
+R have many useful functions and there is not enough place and time to write them all, but for purpose of this materials few of them were selected. 
+
+First two are *setwd* and *getwd* which allow to set and print to console current working directory. It is important for user to choose right working directory. If you (and I hope you do) are working in RStudio and Projects, working directory is already set to folder where project is saved.
+Code below checks working directory.
+
+```{r getwd}
+getwd()
+setwd('REAL ESTATE/')
+```
+
+Another is *list.files()* to print all files in current directory. It is useful when you work with many folders and store results in one of them. Function could be used as follows.
+
+```{r listfiles}
+### print all files in working directory
+list.files()
+### list files with given extension (no such files)
+list.files(pattern='*.txt')
+### list files recursively
+list.files(recursive=T)
+```
+
+When want to create folder from R, one should use *dir.create* function. It is common practise to create different folders for different purposes. For example my projects are mostly have the following structure:
+
+```{r projectdir,eval=FALSE}
+~/ProjectDir/
+~/ProjectDir/Codes
+~/ProjectDir/Data
+~/ProjectDir/Data/RawData
+~/ProjectDir/Data/RData
+~/ProjectDir/Reports
+~/ProjectDir/Reports/Results
+~/ProjectDir/Reports/Graphics
+~/ProjectDir/Reports/Latex
+~/ProjectDir/Reports/Markdown
+```
+
+It is important to have order in project folder especially when you are working on na big project.
+
+In many cases working in R is extended to use external data sources such as text files. In R there are functions that begin with *read*. Most basic ones are used are listed below:
+
+* read.table -- work with different types of files. When reading huge file it is good practice to pass argument *colClasses* which will speed up reading txt files.
+* read.csv, read.csv2 -- functions to read csv files.
+* read.fwf -- function to read fixed width files, which means that there is no delimiter that separate columns.
+
+3. Working with packages
+---------------
+
+Basic functionalities are extended with packages. At the moment there is about 2500 packages for more or less different things. Lately some of them are possible to download from GitHub repository which is great for creating packages.
+
+If we would like to use package that already is with R we should use *library* function.
+
+```{r lib}
+library(ggplot2)
+library(reshape3)
+```
+
+If, as is given in example aboce, there is no package in R that meets the name reshape3, there will be an error. If we want to use new package, install.packages function should be used in this case. Dependencies argument means that we 
+
+```{r lib2,eval=FALSE}
+install.packages('reshape3',dependencies=T)
+```
+
+Common situation is when we have two packages that have the same function and we would like to use them in different context. In other words we want to tell R that we would like to use function from given package. Example is given below, where package have the same name information is given:
+
+```{r reshape}
+library(reshape)
+library(reshape2)
+```
+
+
+Then we should explicitly declare which package we are using. For this we use "::" (double colon). It is called using namespaces (eg. C++) For example:
+```{r reshape2}
+reshape::melt
+reshape2::melt
+```
+
+
+4. Saving and loading data
+---------------
+
+Good practice is to read text files (or other extensions) and then save object (or whole workspace) to .RData file. Why? First of all reading .RData files is faster (because it is native R extension), second it have less size. For this there are two functions.
+
+
+```{r saving,eval=FALSE}
+### saving some of the objects
+save(obj1,obj2,file='fileToSave.RData')
+save.image(file='workspaceToSave.RData')
+```
+
+For loading data we should use function *load* with path to file
+
+```{r loading}
+load('/home/berenz/Dokumenty/Projekty/Projekty_R/UNIVERSITY/REAL ESTATE/DataSets/RData/realEstatesKWW.RData')
+```
+
+We could use function *ls* to show  and *rm* to delete objects from current working directory.
+
+```{r }
+### list object in current directory (similar in unix based systems)
+ls()
+### 
+rm(f)
+```
+
+5. Writing functions
+-------------
+In R there are many functions but not all met our requirements. Some of them are useful but in many cases we would like to combine different functions in one function. In R (as in other languages eg. VBA) it is posible to write your own functions. To do so we first declare name for function, then determine arguments and body of function. Lets se example of basic R fuction.
+
+```{r func1}
+as.data.frame
+```
+
+It is function to change object to as.data.frames in R. If we would like to get part of the information we should use two functions *args* to extract arguments and *body* to get function body.
+
+```{r func2}
+### extracting arguments
+args(as.data.frame)
+```
+
+Basic function should be written as follows:
+
+```{r func3}
+myFunction<-function(x,y=TRUE){
+  m<-mean(x,na.rm=y)
+  return(m)
+}
+```
+
+We declared out own function to calculate mean. In **function** we declare arguments (in round brackets) and after curly brackets we define body of function. It is good practice to put **return** at the end of the function body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

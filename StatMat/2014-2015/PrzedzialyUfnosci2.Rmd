@@ -1,0 +1,90 @@
+---
+title: "Estymacja przedziałowa - rozwiązania zadań z zajęć (2)"
+author: "Maciej Beręsewicz"
+date: "05.11.2014"
+output: pdf_document
+---
+
+**Zadanie 2.** Celem oceny jakości pewnej partii towaru wybrano w sposób losowy 200 sztuk. Okazało się, że 10 miało pewne braki. Przyjmując współczynnik ufności 0,9 metodą przedziałową oszacować jaki procent ca lej produkcji stanowią produkty uszkodzone?
+
+
+```{r zad2dane, echo=FALSE}
+n <- 200
+w <- 10
+p <- w/n
+alpha <- 0.1
+z_q <- qnorm(1-alpha/2)
+```
+
+**Rozwiązanie:**
+
+Korzystamy z: 
+
+$$
+P \bigg\{ \frac{w}{n} - z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n}(1-\frac{w}{n})}{n}} < p <  \frac{w}{n} + z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n}(1-\frac{w}{n})}{n}}  \bigg\} = 1-\alpha
+$$
+
+odczytując z tablic wiemy, że $z_{1-\alpha/2}$ = `r round(z_q,2)`. W związku z tym podstawiając do powyższego wzoru:
+
+$$
+P \bigg\{ 
+`r p` - `r z_q`\sqrt{\frac{`r p`(1 - `r p`)}{`r n`}}
+< P < 
+`r p` + `r z_q`\sqrt{\frac{`r p`(1 - `r p`)}{`r n`}}
+\bigg\} = 1-`r alpha`
+$$
+
+otrzymujemy:
+
+$$
+P \bigg\{ 
+`r round( (p -  z_q*sqrt(p*(1 - p)/n))*100,2)` \%
+< P < 
+`r round( (p +  z_q*sqrt(p*(1 - p)/n))*100,2)` \%
+\bigg\} = `r 1-alpha`
+$$
+
+Co interpretujemy następująco: Z prawdopodobieństwem `r 1-alpha`, przedział (`r round( (p -  z_q*sqrt(p*(1 - p)/n))*100,2)` \%; `r round( (p +  z_q*sqrt(p*(1 - p)/n))*100,2)` \%) pokrywa nieznaną frakcję uszkodzonych produktów w badanej partii towaru.
+
+**Zadanie 4.** W badaniach przeprowadzonych przez pewien ośrodek badania opinii publicznej, spośród 1068 gospodarstw domowych, swoją sytuację materialną jako dobrą oceniło 320 gospodarstw. Przyjmując współczynnik ufności 0,95 oszacować metodą przedziałową frakcję tak oceniających swoją sytuację materialną gospodarstw
+domowych w populacji generalnej.
+
+```{r zad4dane, echo=FALSE}
+n <- 1068
+w <- 320
+p <- w/n
+ufn <- 0.95
+alpha <- 1 - ufn
+z_q <- qnorm(1-alpha/2)
+```
+
+**Rozwiązanie:**
+
+Korzystamy z: 
+
+$$
+P \bigg\{ \frac{w}{n} - z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n}(1-\frac{w}{n})}{n}} < p <  \frac{w}{n} + z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n}(1-\frac{w}{n})}{n}}  \bigg\} = 1-\alpha
+$$
+
+odczytując z tablic wiemy, że $z_{1-\alpha/2}$ = `r round(z_q,2)`. W związku z tym podstawiając do powyższego wzoru:
+
+$$
+P \bigg\{ 
+`r p` - `r z_q`\sqrt{\frac{`r p`(1 - `r p`)}{`r n`}}
+< P < 
+`r p` + `r z_q`\sqrt{\frac{`r p`(1 - `r p`)}{`r n`}}
+\bigg\} = 1-`r alpha`
+$$
+
+otrzymujemy:
+
+$$
+P \bigg\{ 
+`r round( (p -  z_q*sqrt(p*(1 - p)/n))*100,2)` \%
+< P < 
+`r round( (p +  z_q*sqrt(p*(1 - p)/n))*100,2)` \%
+\bigg\} = `r 1-alpha`
+$$
+
+Co interpretujemy następująco: Z prawdopodobieństwem `r 1-alpha`, przedział (`r round( (p -  z_q*sqrt(p*(1 - p)/n))*100,2)` \%; `r round( (p +  z_q*sqrt(p*(1 - p)/n))*100,2)` \%) pokrywa nieznaną frakcję gospodarstw określających swoją sytuację jako dobrą.
+

@@ -1,0 +1,10 @@
+Kategoria	r2002	r2011
+własności budynku	32,1	37,8
+własności mieszkania	10,4	17,6
+spółdzielczego własnościowego prawa do lokalu	16,3	13,5
+spółdzielczego lokatorskiego prawa do lokalu	7,9	2,6
+najmu	17,1	16,6
+podnajmu	1,3	0,3
+pokrewieństwa	14,2	9,5
+innego prawa	0,7	0,5
+nieustalone	0	1,8

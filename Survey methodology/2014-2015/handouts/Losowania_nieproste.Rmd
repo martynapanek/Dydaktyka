@@ -1,0 +1,401 @@
+---
+title: "Metody losowania"
+author: "Maciej Beręsewicz"
+date: "23 Oct 2014"
+output:
+  html_document:
+    number_sections: yes
+  pdf_document: default
+---
+
+```{r ustawienia ,echo=F,message=FALSE,warning=FALSE,error=FALSE}
+library(survey)
+library(sampling)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+opts_chunk$set(warning = FALSE, 
+               message = FALSE, 
+               echo = TRUE,
+               eval = TRUE,
+               tidy = FALSE,
+               size='tiny')
+```
+
+# Wstęp
+
+Poniższy dokument zawiera informację o tym jak losować jednostki według schematów nieprostych z pakietem *sampling*. Struktura dokumentu jest następująca. W pierwszej części poznamy schematy losowania jednostek w przypadku gdy prawdopodobieństwa wylosowania poszczególnych jednostek są takie same. W drugiej części poznamy schematy losowania jednostek gdy prawdopodbieństwo inkluzji jednostek jest różne. Ostatnia część poświęcona będzie pakietowi *survey* oraz temu w jaki sposób deklarujemy poszczególne schematy losowania, które poznamy we wcześniejszych podpunktach.
+
+Przed poznaniem funkcji musimy zainstalować pakiety oraz wczytać dane. Poniższy kod umożliwia instalowanie oraz wczytywanie pakietów.
+
+```{r wczytanie_pakietow,eval=FALSE}
+#### instalowanie pakietów -----------------------------------
+install.packages(c('survey','sampling','ggplot2','dplyr'),
+                 dependencies=T)
+#### wczytanie pakietów -----------------------------------
+library(survey)
+library(sampling)
+library(ggplot2)
+library(dplyr)
+```
+
+Możemy sprawdzić funkcją *sessionInfo()* czy pakiety, które wczytaliśmy są rzeczywiście uruchomione. Szukamy ich nazw pod *other attached packages*.
+
+```{r session_info}
+sessionInfo()
+```
+
+Po sprawdzeniu czy pakiety są zainstalowane możemy przejść do wczytania danych. Skorzystamy ze zbioru dla badania PISA 2009 i na potrzeby tego badania przyjmiemy, że jest to pseudopopulacja. 
+
+```{r loadData}
+setwd("/Users/MaciejBeresewicz/Documents/Projects/GitHub/UNIVERSITY/Course Materials/Survey Design and Analysis")
+load('datasets/pisa2009pol.rda')
+```
+
+Poniżej znajdują się podstawowe informacje o zbiorze danych o szkołach:
+
+```{r schoolInfo}
+summary(school2009)
+```
+
+oraz o studentach
+
+```{r studentInfo}
+summary(student2009)
+```
+
+# Losowanie z wykorzystaniem funkcji sample oraz pakietu sampling
+
+W tej części zajmiemy się różnymi schematami losowania, które są dostępne w pakiecie sampling, jak również z domyślną funkcją *sample*.
+
+## Losowanie proste bez zwracania
+
+Pierwszym i najprostrzym schematem losowania jest losowanie proste bez zwracania. W takim przypadku losujemy określony podzbiór jednostek bez uwzględniania zmiennych pomocniczych (np. płci, wieku). W R możemy wykorzystać w tym celu funkcję sample lub sampling::srswor
+
+Poniżej przykład wykorzystania funkcji dla zbioru studenci. Załóżmy, że naszym celem jest oszacowanie liczby książek, którą posiadają studenci w domu, jak również średniego poziomu dla zmiennej PV1MATH określającego poziom umiejętności matematycznych.
+
+```{r srs}
+### ID Studentów
+id_student <- student2009$STIDSTD
+
+### Frakcja, którą losujemy
+prop_wylos <- 0.1
+
+### Wielkość próby
+n_wylos <- round(length(id_student)*prop_wylos)
+
+### identyfikatory wylosowanych studetów
+set.seed(123) ## ustawienie ziarna losowania tak aby każda osoba dostała taki sam wynik
+id_s_wylos <- sample(x = id_student,
+                     size = n_wylos)
+
+### wylosowani studenci
+student2009_samp <- subset(student2009, STIDSTD %in% id_s_wylos)
+```
+
+Sprawdzmy teraz jakie wyniki otrzymujemy w przypadku losowania prostego i porównamy do populacji.
+
+```{r srs_results}
+### porównanie średniej
+c(SREDNIA_PROBA = mean(student2009_samp$PV1MATH),
+  SREDNIA_POPULACJA = mean(student2009$PV1MATH))
+
+### porównanie rozkładu
+summary(student2009_samp$PV1MATH)
+summary(student2009$PV1MATH)
+
+### porównanie rozkładu dla ksiażek
+round(prop.table(table(student2009_samp$ST22Q01))*100,2)
+round(prop.table(table(student2009$ST22Q01))*100,2)
+```
+
+Teraz wykorzystamy funkcję sampling::srswor
+
+```{r sampling_srs}
+### ID Studentów
+id_student <- student2009$STIDSTD
+
+### Frakcja, którą losujemy
+prop_wylos <- 0.1
+
+### Wielkość próby
+n_wylos <- round(length(id_student)*prop_wylos)
+
+### losujemy
+set.seed(123)
+row_wylos <- srswor(n_wylos,nrow(student2009))
+
+### sprawdzmy jak wygląda wynik
+head(row_wylos)
+
+### wybieranie jednostek
+stu_samp <- student2009[row_wylos, ]
+```
+
+
+## Losowanie proste ze zwracaniem
+
+## Losowanie systematyczne
+
+Losowanie systematyczne polega na wylosowaniu określonej liczby jednostek wykorzystując stały interwał między wybieranymi jednostkami (np. co 5). Interwał określany jest przez stosunek wielkości populacji do wielkości próby. Losowanie systematyczne może również uwzględniać fakt, że jednostki maja nierówne prawdopodobieństwa dostania się do próby. W tym przykładzie zastosujemy dwa podejścia - losowanie z równymi prawdopodobieństwami oraz losowanie z nierównymi prawdopodobieństwami.
+
+W pierwszym przypadku wykorzystamy funkcję *seq*, która umożliwia tworzenie wektorów z pewnym krokiem. Istotny jest również element określający start losowania systematycznego, co wpływa na dobór jednostek.
+
+```{r systematic_srs}
+### wielkość populacji
+N <- nrow(student2009)
+
+## wielkość próby
+n <- round(N*prop_wylos)
+
+## krok
+k <- N/n
+
+## losowanie początku
+set.seed(123)
+start <- sample(1:k,1)
+
+## losowanie systematyczne
+id_wylos <- seq(from = start, 
+                to = N,
+                by = round(k))
+
+### wylosowanie jednostki
+stu_samp <- student2009[id_wylos,]
+
+```
+
+Poniżej przedstawiamy porównanie w przypadku losowania systematycznego
+
+```{r systematic_results}
+### porównanie średniej
+c(SREDNIA_PROBA = mean(stu_samp$PV1MATH),
+  SREDNIA_POPULACJA = mean(student2009$PV1MATH))
+
+### porównanie rozkładu
+summary(stu_samp$PV1MATH)
+summary(student2009$PV1MATH)
+
+### porównanie rozkładu dla ksiażek
+round(prop.table(table(stu_samp$ST22Q01))*100,2)
+round(prop.table(table(student2009$ST22Q01))*100,2)
+```
+
+## Losowanie proporcjonalne do zmiennej pomocniczej
+
+W tym celu wykorzystamy funkcję sampling::UPpoisson - jeden ze schematów losowania wykorzystywany w przypadku przyjęcia za zmienną pomocniczą zmienną ciągłą. Najczęściej takie losowanie wykorzysujemy gdy chcemy losować jednostki proporcjonalnie do ich wielkości (np. liczby zatrudnionych, przychodów). W naszym przypadku możemy losować szkoły proporcjonalnie do liczby uczniów (zmienna SCHSIZE).
+
+Przyjrzyjmy się zmiennej SCHSIZE.
+
+```{r sampling_uppoisson}
+summary(school2009$SCHSIZE)
+```
+
+Niestety w zmiennej mamy braki danych dlatego musimy ogarniczyć zbiór danych do rekordów pozbawionych wartości brakujacych.
+
+```{r sampling_uppoisson2}
+### wybranie pełnych obserwacji
+school2009clean <- school2009[complete.cases(school2009),]
+
+### sprawdzenie czy są braki danych
+summary(school2009clean$SCHSIZE)
+```
+
+Wykorzystamy teraz funkcję sampling::UPpoisson oraz sampling::inclusionprobabilities, która służy do określenia prawdopodobieństw inkluzji poszczególnych jednostek.
+
+```{r sampling_uppoisson3}
+### wielkość próby
+n <- 90
+### obliczamy prawdopodobieństwa 
+pik <- inclusionprobabilities(school2009clean$SCHSIZE,n)
+
+### wykres jak zmienia jak wygląda prawdopodobieństwo
+n_sch <- nrow(school2009clean)
+
+qplot(x=1:n_sch,y=pik,geom='bar') +
+  geom_bar(col='blue',fill=NA,stat='identity') +
+  theme_bw() +
+  xlab('Numer szkoły') + ylab('Prawdopodobieństwo inluzji\n')
+
+```
+
+Po ustaleniu prawdopodobieństw wylosowania poszczególnych jednostek stosujemy funkcję sampling::UPpoisson. W wyniku otrzymujemy wektor składający się z 0-1, który określa czy dana jednostka jest wylosowana (1) lub niejest wylosowania (0).
+
+```{r sampling_uppoisson4}
+### losowanie z wykorzystaniem funkcji UPpoisson (losowa wielkość jednak zbliżona do 38)
+set.seed(123)
+pp_wylos <- UPpoisson(pik)
+sum(pp_wylos)
+
+### identyfikatory szkoły
+
+### wybranie jednostek
+stu_pp <- school2009clean[pp_wylos==1,]
+stu_pp$pik <- pik[pp_wylos==1]
+stu_pp$fpc <- nrow(school2009clean)
+```
+
+Wartość globalną możemy oszacować jako suma iloczynów kolumny *SCHSIZE* oraz odwrotności *pik*, która będzie określać wagi dla poszczególnych szkół.
+
+```{r sampling_uppoison_result}
+sum(stu_pp$SCHSIZE * 1/stu_pp$pik)
+```
+
+Porównamy teraz szacunki z wykorzystaniem funkcji survey::svydesign
+
+```{r sampling_uppoisson_results2}
+### deklaracja schematu losowania
+des_up <- svydesign(ids=~1,
+                    probs = ~pik, 
+                    fpc = ~fpc,
+                    data = stu_pp)
+
+### szacowanie wielkości szkół
+svytotal(~SCHSIZE,des_up)
+```
+
+
+## Losowanie warstwowe
+
+W przypadku losowania warstwowego wykorzystamy funkcję sampling::strata. Funkcja ta umożliwia następujące losowania jednostek:
+
+* srswor - losowanie proste bez zwracania
+* srswr - losowania proste ze zwracaniem
+* poisson - losowanie proporcjonalne do zmiennej pomocniczej
+* systematic - losowanie systematyczne
+
+Jeżeli chcemy wylosować jednostki proporcjonalnie do poszczególnych warstw musimy wcześniej odpowiednio przygotować zbiór danych. Naszym celem jest wylosowanie szkół proporcjonalnie do jej typu oraz lokalizacji.
+
+Spójrzmy jaki jest rozkład tej cechy.
+
+```{r strat_check}
+prop.table(xtabs(~SC02Q01+SC04Q01,school2009clean))
+```
+
+Załóżmy, że chcemy wylosować 100 szkół. W związku z tym powinniśmy wylosować następującą liczbę szkół.
+
+```{r strat_check2}
+round(prop.table(xtabs(~SC02Q01+SC04Q01,school2009clean))*100)
+```
+
+Poniżej funkcja, którą napisałem na potrzeby tego skryptu
+
+```{r strat_samp_function}
+strat_samp <- function(data,
+                       samp_size,
+                       ...) {
+  
+  ### sample function 
+  samp_one <- function(x) {
+    sample(1:length(x),length(x))
+  }
+  
+  ### function
+  ds <- data %>%   
+            group_by(...) %>%
+            mutate(N_strat = n(),
+                   los = samp_one(N_strat)) %>%
+            group_by() %>%
+            mutate(N = n(),
+                   n_samp = round(N_strat/N*samp_size),
+                   filter = los <= n_samp) %>%
+            filter(filter) %>%
+            select(-(N_strat:filter))
+  return(ds)
+}
+```
+
+Wykorzystamy teraz powyższą funkcję do losowania (losowanie proste bez zwracania)
+
+```{r strat_sample}
+strat_samp(data=school2009, ### zbiór wejściowy
+           samp_size=100, ### wielkość próby
+           SC02Q01,SC04Q01)  ### zmienne warstwujące
+```
+
+
+## Losowanie zespołowe
+
+W tym miejscu połączymy zbiór szkół oraz uczniów.
+
+```{r laczenie_zbiorow}
+pisa <- merge(x = student2009,
+              y = school2009clean,
+              all.x=T)
+pisa <- pisa[complete.cases(pisa$SCHSIZE),]
+dim(pisa)
+head(pisa)
+```
+
+W pakiecie *sampling* jest funkcja *cluster*, która umożliwia losowanie zespołowe z równymi bądź nierównymi prawdopodobieństwami inkluzji. Funkcja ma następujące argumenty:
+
+* data - zbiór danych wejściowych
+* clustername - zmienna, która określa zespoł (np. id szkoły)
+* size - określa wielkość próby
+* method - określa metodę losowania - prostą bez zwracania (srswor), prostą ze zwracaniem (srswr), proporcjonalną do zmiennej pomocniczej (poisson) lub systematycznie (systematic)
+* pik - zmienna wg której dokonujemy losowania poissona
+
+Poniżej kilka wywołań funkcji. W poniższym przykładzie dokonujemy losowania 60 szkół w których badamy wszystkich uczniów. Stosujemy losowanie proste bez zwracania. W wyniku otrzymujemy obiekt data.frame z informacją o wylosowanej szkole, jednostkach w ramach szkół oraz prawdopodobieństwie wylosowania, które jest przypisane do każdego ucznia.
+
+```{r cluster_examples}
+wyn <- cluster(data = pisa, 
+               clustername = 'SCHOOLID', 
+               size = 60, 
+               method = 'srswor')
+table(droplevels(wyn$SCHOOLID))
+```
+
+Zobaczmy jakbyśmy chcieli uwzględnić zmienną określającą wielkość szkoły tak aby wykorzystać losowanie proporcjonalne do zmiennej pomocniczej. Aby to zrobić korzystamy ze zbioru dla szkół ponieważ przy wyborze zmiennej pomocniczej musielibyśmy użyć innej zmiennej, która jest przyposana do każdego ucznia.
+
+```{r cluster_examples2}
+wyn <- cluster(data = school2009clean, 
+               clustername = 'SCHOOLID', 
+               size = 60, 
+               description = TRUE, 
+               pik = school2009clean$SCHSIZE,
+               method = 'poisson')
+head(wyn)
+```
+
+
+## Losowanie dwustopniowe
+
+Przejdziemy teraz do najczęściej stosowanego schematu losowania tj. losowania dwustopniowego. W pierwszym kroku losuje się zwykle terenowe rejony spisowe (jednostki statystyczne), a w ramach tych jednostek następnie losowane są kolejne jednostki (np. mieszkania, uczniowe). W przypadku badania *PISA* w pierwszym etapie losowane były szkoły proporcjonalnie do liczby uczniów, a następnie w ramach szkół uczniowe. Spróbujmy odtworzyć to losowanie.
+
+Możemy w tym celu wykorzystać funkcję *sampling::mstage*, która ma następujace argumenty:
+
+* data - zbiór danych wejściowy
+* stage - określamy w jaki sposób mają być losowane jednostki na poszczególnych etapach - do wyboru mamy "stratified", "cluster" lub "" co oznacza brak stosowania losowania zespołowego oraz stratyfikacyjnego.
+* varames - wskazujemy zmienne, które określają zespoły lub warstwy
+* pik - zmienna wykorzystywana do losowania proporcjonalnego (poissona)
+* method - do wyboru są następujące metody: "srswor", "srswr", "poisson" oraz "systematic"
+* description - zwraca informacje podsumowanie losowania.
+
+Na początek przeprowadzimy losowanie jednostopniowe ale uwzględniające stratfikację względem dwóch zmiennych - SC02Q01 (status) oraz SC04Q01 (lokalizacja), a następnie losujemy szkoły.
+
+
+```{r twostage_sampling}
+pisa <- pisa %>% arrange(SC02Q01,SCHOOLID)
+wyn <- mstage(data = pisa, 
+              stage = list('stratified', 'cluster'), 
+              varnames = list('SC02Q01','SCHOOLID'),
+              size = list(c(45,5),c(10,1)),
+              method = 'srswor')
+str(wyn,2)
+```
+
+Przeprowadzimy teraz losowanie dwustopniowe - w pierwszym stopniu losujemy szkoły, a następnie losujemy uczniów.
+
+```{r twostage_sampling2}
+### losujemy szkoły
+szkoly <- strat_samp(data= school2009clean,
+                     samp_size=50,
+                     SC02Q01,SC04Q01) 
+
+```
+
+
+
+
+
+

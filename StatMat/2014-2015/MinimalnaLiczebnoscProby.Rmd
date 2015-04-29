@@ -1,0 +1,73 @@
+---
+title: "Minimalna liczebność próby - rozwiązania zadań z zajęć"
+author: "Maciej Beręsewicz"
+date: "12.11.2014"
+output: pdf_document
+---
+
+**Zadanie 11**. Firma zajmująca się analizą rynku chce przeprowadzić badania ankietowe w celu oszacowania wydatków na rozrywki przez przeciętnego kuracjusza odwiedzającego popularne uzdrowisko. Osoba, która zleca badania, chciałaby znać te wydatki z przybliżeniem nie większym niż 120 zł przy współczynniku ufności 95\%. Na podstawie dotychczasowych obserwacji działalności uzdrowiska odchylenie standardowe w populacji szacuje się na 400 zł. Jaka jest minimalna wymagana liczebność próby dla oszacowania średnich wydatków kuracjusza? 
+
+ 
+```{r zad11dane, echo=FALSE}
+d <- 120
+sigma <- 400
+alpha <- 0.05
+z_q <- qnorm(1-alpha/2)
+n <-  z_q^2*sigma^2/d^2
+```
+
+**Rozwiązanie:**
+
+Korzystamy ze wzoru dla przypadku ze znanym odchyleniem standardowym dla populacji 
+
+$$
+n = \frac{z_{1-\alpha/2}^2 \times \sigma^2}{d^2}
+$$
+
+odczytując z tablic wiemy, że $z_{1-\alpha/2}$ = `r round(z_q,2)`. W związku z tym, podstawiając do powyższego wzoru, otrzymujemy:
+
+$$
+n = \frac{`r z_q`^2 \times `r sigma`^2}{`r d`^2} = \frac{`r z_q^2*sigma^2`}{`r d^2`} = `r z_q^2*sigma^2/d^2` 
+$$
+
+Co interpretujemy następująco: aby oszacować wydatki z błędem nie większym niż 120 złotych oraz przy współczynniku ufności 95\% należy wylosować \textbf{co najmniej} `r round(n)` kuracjuszy odwiedzających uzdrowisko.
+
+
+**Zadanie 17.** Ile dorosłych osób należałoby wylosować w sposób niezależny do próby celem analizy rynku szamponów? Za najważniejszą cechę uznano częstość mycia włosów w ciągu tygodnia. Wylosowana próba wstępna dała następujące wyniki: 1, 3, 3, 2, 1, 5, 7, 2, 2, 4, 3, 4,3, 3, 2, 2, 1, 2, 2, 1. Niezbędna wielkość próby należy oszacować przy współczynniku ufności 0,9, przyjmując za maksymalny dopuszczalny błąd szacunku 0,1 razy w ciągu tygodnia.
+
+
+```{r zad17dane,echo=FALSE}
+d <- 0.1
+alpha <- 0.1
+dane <- c(1, 3, 3, 2, 1, 5, 7, 2, 2, 4, 3, 4,3, 3, 2, 2, 1, 2, 2, 1)
+n <- length(dane)
+s <- sd(dane)
+t_q <- qt(1-alpha/2,n-1)
+n_min <- t_q^2*s^2/d^2
+```
+
+
+**Rozwiązanie:**
+
+
+Korzystamy ze wzoru dla przypadku z nieznanym odchyleniem standardowym dla populacji.
+
+
+
+$$
+n = \frac{t_{1-\alpha/2,n-1}^2 \times s^2}{d^2}
+$$
+
+
+liczba stopni swobody wynosi n-1=`r n-1` odczytując z tablic wiemy, że $t_{1-\alpha/2,n-1}$ = `r round(t_q,2)`. W związku z tym podstawiając do powyższego wzoru otrzymujemy:
+
+$$
+n = \frac{`r t_q`^2\times `r s`^2}{`r d`^2}= \frac{`r t_q^2*s^2`}{`r d^2`} = `r n_min`
+$$
+
+
+Co interpretujemy następująco: aby oszacować częstość mycia włosów w ciągu tygodnia z błędem nie większym niż 0.1 oraz przy współczynniku ufności 90\% należy wylosować \textbf{co najmniej} `r round(n_min)` dorosłych osób.
+
+
+
+

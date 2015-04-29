@@ -1,0 +1,159 @@
+---
+title: "Minimalna liczebność próby - zależności między wzorami dla przedziałów ufności"
+author: "Maciej Beręsewicz"
+date: "12.11.2014"
+output: pdf_document
+---
+
+Poniższy dokument przedstawia zależności między wzorami dla przedziałów ufności, a wielkością próby.
+
+# Gdy znane jest odchylenie standardowe z populacji
+
+$$
+P\{ \bar{x} - z_{1-\alpha/2}\frac{\sigma}{\sqrt{n}} < m <  \bar{x} + z_{1-\alpha/2}\frac{\sigma}{\sqrt{n}} \} = 1-\alpha
+$$
+
+Co możemy zapisać
+
+$$
+P\{ \bar{x} - d < m <  \bar{x} + d \} = 1-\alpha
+$$
+
+W związku z tym, możemy przekształcić wzór 
+
+$$
+d = z_{1-\alpha/2}\frac{\sigma}{\sqrt{n}}
+$$
+
+tak, aby otrzymać minimalną liczebność próby ($n$). Przekształacając otrzymujemy
+
+$$
+d \times \sqrt{n} = z_{1-\alpha/2} \times \sigma.
+$$
+
+Dzielimy przez $d$
+
+$$
+\sqrt{n} = \frac{z_{1-\alpha/2} \times \sigma}{d}.
+$$
+
+Podnosząc obustronnie do kwadratu, otrzumujemy wzór na minimalną wielkość próby.
+
+
+$$
+n = \left( \frac{z_{1-\alpha/2}\sigma}{d} \right)^2 = 
+\frac{z_{1-\alpha/2}^2 \times \sigma^2}{d^2}
+$$ 
+
+# Gdy nieznane jest odchylenie standardowe z populacji
+
+$$
+P\{ \bar{x} - t_{1-\alpha/2,n-1}\frac{s}{\sqrt{n}} < m <  \bar{x} + t_{1-\alpha/2,n-1}\frac{s}{\sqrt{n}} \} = 1-\alpha
+$$
+
+Co możemy zapisać
+
+$$
+P\{ \bar{x} - d < m <  \bar{x} + d \} = 1-\alpha
+$$
+
+W związku z tym, możemy przekształcić wzór
+
+$$
+d = t_{1-\alpha/2,n-1} \times \frac{s}{\sqrt{n}}
+$$
+
+tak, aby otrzymać minimalną liczebność próby ($n$). Przekształacając otrzymujemy
+
+$$
+d \times \sqrt{n} = t_{1-\alpha/2,n-1} \times s.
+$$ 
+
+Dzielimy przez $d$
+
+$$
+\sqrt{n} = \frac{t_{1-\alpha/2,n-1} \times s}{d}.
+$$ 
+
+Podnosząc obustronnie do kwadratu, otrzumujemy wzór na minimalną wielkość próby.
+
+$$
+n = \left( \frac{t_{1-\alpha/2,n-1} \times s}{d} \right)^2 = 
+\frac{t_{1-\alpha/2,n-1}^2 \times s^2}{d^2}.
+$$ 
+
+# Gdy znana jest frakcja dla populacji
+
+$$
+P \bigg\{ \frac{w}{n} - z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n}(1-\frac{w}{n})}{n}} < p <  \frac{w}{n} + z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n}(1-\frac{w}{n})}{n}}  \bigg\} = 1-\alpha
+$$
+
+Co możemy zapisać
+
+$$
+P \bigg\{ \frac{w}{n} - d < p <  \frac{w}{n} + d  \bigg\} = 1-\alpha
+$$
+
+W związku z tym, możemy przekształcić wzór
+
+$$
+d = z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n} \times (1-\frac{w}{n})}{n}}
+$$
+
+tak, aby otrzymać minimalną liczebność próby ($n$). W celu przejrzystości obliczeń podstawmy $p=\frac{w}{n}$. 
+
+$$
+d = z_{1-\alpha/2}\sqrt{\frac{p \times (1-p)}{n}}
+$$
+
+Podnosimy obie strony do kwadratu
+
+$$
+d^2 = z_{1-\alpha/2}^2\frac{p \times (1-p)}{n}.
+$$
+
+Przekształacjąc otrzymujemy
+
+$$
+d^2 \times n = z_{1-\alpha/2}^2 \times p \times (1-p).
+$$
+
+Dzieląc przez $d^2$ otrzymujemy wzór na wielkość próby:
+
+$$
+n = \frac{z_{1-\alpha/2}^2 \times p \times (1-p)}{d^2}.
+$$
+
+# Gdy nieznana jest frakcja dla populacji
+
+
+$$
+P \bigg\{ \frac{w}{n} - z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n}(1-\frac{w}{n})}{n}} < p <  \frac{w}{n} + z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n}(1-\frac{w}{n})}{n}}  \bigg\} = 1-\alpha
+$$
+
+Co de facto oznacza
+
+$$
+P \bigg\{ \frac{w}{n} - d < p <  \frac{w}{n} + d  \bigg\} = 1-\alpha
+$$
+
+W związku z tym, możemy przekształcić wzór
+
+$$
+d = z_{1-\alpha/2}\sqrt{\frac{\frac{w}{n} \times (1-\frac{w}{n})}{n}}
+$$
+
+tak, aby otrzymać minimalną liczebność próby ($n$). Wzór rózni się od otrzymanego w poprzednim paragrafie tym, że w przypadku nieznanej frakcji $p$ zakładamy, że równa się 0.5.
+
+$$
+n = \frac{z_{1-\alpha/2}^2 \times 0.5 \times (1-0.5)}{d^2}.
+$$
+
+Co daje nam
+
+$$
+n = \frac{z_{1-\alpha/2}^2 \times 1/4}{d^2} = \frac{z_{1-\alpha/2}^2}{4d^2}.
+$$
+
+
+

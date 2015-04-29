@@ -1,0 +1,153 @@
+---
+title: "Test zgodności Chi-Kwadrat"
+author: "Maciej Beręsewicz"
+output: pdf_document
+header-includes:
+   - \usepackage{float}
+---
+
+# Teoria
+
+
+Test zgodności $\chi^2$ ma na celu weryfikację hipotezy mówiącej, że rozkład danej zmiennej jest zgodny z rozkładem teoretycznym (zadanym przez badacza, znanym z populacji).
+
+Statystyka $\chi^2$ opisana jest poniższym wzorem:
+
+$$
+\chi^2 = \sum_{i=1}^{n} \frac{(O_i-E_i)^2}{E_i}
+$$
+
+gdzie: $E_i$ jest wartością teoretyczną (np. liczebnością, frakcją) dla $i$-tej wartości (przedziału) badanej zmiennej, natomiast $O_i$ jest wartością obserwowaną (np. liczebnością, frakcją) dla $i$-tej wartości (przedziału) badanej zmiennej. Innymi słowy, test $\chi^2$ bada na ile rozkład obserwowany jest zgodny z założonym (teoretycznym). Test ten można również spotkać pod nazwą test $\chi^2$ Pearsona lub Goodness of Fit.
+
+Hipoteza zerowa i alternatywna dla tego testu jest następująca:
+
+* H0: $F_o = F_t$
+* H1: $F_o \ne F_t$
+
+Gdzie $F$ oznacza dystrybuantę rozkładu, $o$ oznacza rozkład zmiennej obserwowanej, $t$ oznacza rozkład teoretyczny.
+
+Powyższy wzór można również zapisać w następujący sposób:
+
+$$
+\chi^2 = \sum_{i=1}^{r} \frac{(f_i-np_i)^2}{np_i}
+$$
+
+gdzie: $f_i$ to frakcja obserwowana, $np_i$ to frakcja, która wynika z rozkładu teoretycznego (np. dla populacji).
+
+Test zgodności wykorzystujemy gdy:
+
+* chcemy zbadać czy rozkład empiryczny (obserwowany) jest zgodny z rozkładem teoretycznym (np. Poissona, Normalnym),
+* chcemy zbadać czy rozkład próby (np. płeć) jest zgodny z rozkładem populacji.
+
+
+# Przykładowe zadania
+
+*Zadanie 1.* Liczbę dni opuszczonych przez studentów w listopadzie w wylosowanej próbie 250 studentów charakteryzuje poniższy szereg rozdzielczy. Proszę zweryfikować hipotezę ($\alpha=0.05$), że rozkład liczby dni opuszczonych przez studentów jest zgodny z rozkładem Poissona o średniej $\lambda=1$.
+
+```{r zad1teor,echo=FALSE}
+x <- 0:5
+lambda <- 1
+n_emp <- c(30,110,50,40,15,5)
+p_x <- n_emp / sum(n_emp)
+p_teret <- dpois(x,lambda)
+p_n_teoret <- p_teret*sum(n_emp)
+chi_test <- sum( (n_emp - p_n_teoret)^2 / p_n_teoret)
+alpha <- 0.05
+chi_kry <- qchisq(1-alpha,df = length(x) - 1)
+```
+
+```{r zad1dane,results='asis',echo=FALSE,comment='%'}
+library(xtable)
+
+emp <- data.frame("Liczba opuszczonych dni" = 0:5, 
+                  "Liczba studentów"=n_emp)
+print(xtable(emp,digits=0),include.rownames = FALSE,table.placement="H",comment=F,floating=TRUE)
+```
+
+Z tablic odczytujemy wartości teoretyczne dla rozkładu Poissona przy parametrze $\lambda=1$.
+
+```{r zad1table,results='asis',echo=FALSE,comment='%'}
+teor <- data.frame(x = 0:5, 
+                   teoretyczne=p_teret,
+                   liczebność_teoretyczna=p_n_teoret)
+print(xtable(teor,digits=4),include.rownames = FALSE,table.placement="H",comment=F,floating=TRUE)
+```
+
+Na podstawie danych wyznaczamy wartości empiryczne i zapisujemy w tabeli z wartościami teoretycznymi. Następnie odejmujemy od wartości empirycznych wartości teoretyczne i podnosimy je do kwadratu (ET2)
+
+```{r zad1table2,results='asis',echo=FALSE,comment='%'}
+teor <- data.frame(x = 0:5, 
+                   Teoretyczne=p_n_teoret,
+                   Empiryczne=n_emp,
+                   ET2 = (n_emp-p_n_teoret)^2)
+print(xtable(teor,digits=4),
+      include.rownames = FALSE,
+      table.placement="H",
+      comment=F,
+      floating=TRUE,
+      sanitize.colnames.function=function(x){x})
+```
+
+
+Następnie sumujemy kolumnę ET2 i otrzymujemy statystykę $\chi^2$ równą `r chi_test`. Porównując do wartości krytycznej odczytanej z tablic $\chi^2_{kryt}(`r length(x) - 1`)=`r chi_kry`$ podejmujemy decyzję o odrzuceniu hipotezy zerowej na rzecz alternatywnej, co oznacza, że rozkład nieobecności studentów na zajęciach nie jest zgodny z rozkładem Poissona o średniej równej 1.
+
+*Zadanie 2.* W ramach [Diagnozy Społecznej](http://www.diagnoza.com) w 2013 roku przeprowadzono badanie na próbie gospodarstw domowych równej 12 505. Aby móc wnioskować na populację gospodarstw domowych w Polsce należy porównać rozkłady z próby i populacji. W związku z tym zweryfikuj hipotezę o zgodności rozkładów liczby gospodarstw domowych w próbie pochodzącej z badania [Diagnoza Społeczna](http://www.diagnoza.com) i populacji (określonej przez [Główny Urząd Statystyczny](http://www.google.pl/url?sa=t&rct=j&q=&esrc=s&source=web&cd=3&ved=0CCoQFjAC&url=http%3A%2F%2Fstat.gov.pl%2Fdownload%2Fgfx%2Fportalinformacyjny%2Fpl%2Fdefaultaktualnosci%2F5486%2F9%2F8%2F1%2Fbudzety_gospodarstw_domowych_2013.pdf&ei=3e1xVIHdO8StPN_igdAG&usg=AFQjCNEEe-1KlDe2a-lwrWR1kDPZPHfhUw&sig2=DqBULs5pqLaPFpnF4-jmWA&bvm=bv.80185997,d.ZWU&cad=rjt)) w 2013 roku w przekroju klas miejscowości (6 klas miejscowości). Przyjmuj poziom istotności równy $\alpha=0.01$. Dane przedstawia poniższa tabela
+
+```{r zad2dane,echo=FALSE}
+diagnoza <- c(1804,1371,1078,2563,1526,4163)
+gus <- c(3341,3487,4090,6362,4278,15623)
+n_gus <- sum(gus)
+p_diag <- diagnoza/sum(diagnoza)
+E <- n_gus * p_diag
+chi_emp <- sum( (gus-E)^2 / E)
+alpha <- 0.01
+chi_kryt <- qchisq(p=1-alpha,length(diagnoza)-1)
+```
+
+```{r zad2table2,results='asis',echo=FALSE}
+teor <- data.frame(KlasaMiejscowości = c('Powyżej 500 tys.',
+                         '200-499 tys.',
+                         '100-199 tys.',
+                         '20-99 tys.',
+                         'Poniżej 20 tys.',
+                         'Wieś'), 
+                   DiagnozaSpołeczna=p_diag,
+                   GUS=gus)
+print(xtable(teor,digits=4),
+      include.rownames = FALSE,
+      table.placement="H",
+      comment=F,
+      floating=TRUE,
+      sanitize.colnames.function=function(x){x})
+```
+
+Aby sprawdzić zgodność rozkładów korzystamy ze statystyki $\chi^2$ określonej poniższym wzorem
+
+$$
+\chi^2 = \sum_{i=1}^{r} \frac{(f_i-np_i)^2}{np_i},
+$$
+
+gdzie, w przypadku tego zadania, $f_i$ to frakcja gospodarstw domowych pochodząca z diagnozy społecznej dla $i$-tej klasy miejscowości, a $np_i$ to frakcja gospodarstw domowych pochodząca z Głównego Urzędu Statystycznego dla $i$-tej klasy miejscowości.
+
+Aby obliczyć statystykę $\chi^2$ musimy obliczyć $(f_i-np_i)^2$ co zawarte jest w kolumnie DG2.
+
+```{r zad2table2.1,results='asis',echo=FALSE}
+teor <- data.frame(KlasaMiejscowisći = c('Powyżej 500 tys.',
+                         '200-499 tys.',
+                         '100-199 tys.',
+                         '20-99 tys.',
+                         'Poniżej 20 tys.',
+                         'Wieś'), 
+                   DiagnozaSpołeczna=p_diag,
+                   GUS=gus,
+                   NP=n_gus*p_diag)
+
+print(xtable(teor,digits=4),
+      include.rownames = FALSE,
+      table.placement="H",
+      comment=F,
+      floating=TRUE,
+      sanitize.colnames.function=function(x){x})
+```
+
+Statystyka $\chi^2$ wynosi `r chi_emp`, natomiast wartość krytyczna dla $\alpha=0.01$ oraz `r length(gus)-1` stopni swobody wynosi `r chi_kryt`. Oznacza to, że odrzucamy hipotezę zerową na rzecz alternatywnej mówiącej o tym, że rozkłady gospodarstw domowych w 2013 roku w badaniu [Diagnoza Społeczna](http://www.diagnoza.com) oraz znane rozkłady z Głównego Urzędu Statystycznego nie są zgodne.

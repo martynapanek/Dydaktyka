@@ -1,0 +1,109 @@
+---
+title: "Testowanie średnich - dwie średnie"
+author: "Maciej Beręsewicz"
+date: "03.12.2014"
+output: pdf_document
+---
+
+```{r tplot,echo=FALSE}
+t_dens_auc <- function(df,t_kr,t_emp,xtext=0,alt='g'){
+  library(ggplot2)
+  library(ggthemes)
+  
+  den_curve <- data.frame(x=seq(-5,5,length=100),
+                          y=dt(seq(-5,5,length=100),df))
+  
+  p <- qplot(data=den_curve,
+             x=x,
+             y=y,
+             geom='line') +
+     geom_point(aes(x=t_emp,
+                   y=0),
+               shape=20,
+               size=3)+
+    annotate('text',
+             x=t_emp+xtext,
+             y=0.2,
+             label=paste0('Wartość\nstatystyki\nwynosi=',
+                          round(t_emp,2),
+                          '\ni jest \noznaczona\nczarnym kółkiem'),
+             size=3,
+             fontface=3,
+             family='serif') +
+    ylab('Gęstość') +
+    xlab('') + 
+    theme_tufte()
+  
+  if (alt == 'g') {
+    p <- p + geom_ribbon(data=subset(den_curve, x > t_kr),
+                aes(ymax=y,ymin=0),
+                fill='red',
+                colour=NA,
+                alpha=0.5) 
+  }
+  else if (alt=='l') {
+    p <- p + geom_ribbon(data=subset(den_curve, x < t_kr),
+                aes(ymax=y,ymin=0),
+                fill='red',
+                colour=NA,
+                alpha=0.5) 
+  }
+    
+   
+  return(p)
+}
+
+```
+
+*Zadanie 9*. Zbadano 200 rodzin w miastach liczących 5 – 10 tys. mieszkańców i 100 rodzin wiejskich pod względem liczby posiadanych dzieci. Okazało się, ze rodziny miejskie miały łącznie 440 dzieci, a typowy obszar zmienności dla tej cechy wynosił od 1 do 3,4. Z kolei rodziny wiejskie posiadały średnio 2,5 dzieci przy odchyleniu standardowym wynoszącym 1. Traktując otrzymane wyniki jako wyniki badań próbnych, sprawdź hipotezę, ze średnia liczba dzieci w rodzinach wiejskich jest większa niż w rodzinach miejskich ($\alpha$ = 0, 05).
+
+```{r zad9data,echo=FALSE}
+n1 <- 200
+n2 <- 100
+sum1 <- 440
+m1 <- 440/n1
+s1 <- 3.4 - m1
+m2 <- 2.5
+s2 <- 1
+alpha <- 0.05
+df <- n1+n2-2
+t_kr <- qt(alpha,df)
+sp2 <- ((n1-1)*s1^2+ (n2-1)*s2^2) / (df)
+t_emp <- (m1-m2)/ sqrt( sp2/n1 + sp2/n2)  
+```
+
+W pierwszym kroku zapisujemy hipotezy:
+
+* H0: $\mu_{1:miejskie} \neq \mu_{2:wiejskie}$
+* H1: $\mu_{1:miejskie} < \mu_{2:wiejskie}$
+
+Aby zweryfikować hipotezę musimy obliczyć statystykę krytyczną określoną wzorem:
+
+$$
+t = \frac{\bar{x}_1-\bar{x}_2}{\sqrt{\frac{s_p^2}{n_1}+\frac{s_p^2}{n_2} }}.
+$$
+
+gdzie:
+
+$$
+s_p^2 = \frac{(n_1-1) \times s_1^2 + (n_2-1) \times s_2^2}{n_1+n_2-2}
+$$
+Natomiast weryfikujemy hipotezę porównując wartość statystyki testowej do wartości krytycznej określonej następująco.
+
+$$
+t_{kr} = t_{\alpha, n_1+n_2-2}
+$$
+
+Szukamy wartości dla $\alpha$ dlatego, że badana hipoteza alternatywna jest jednostronna (pojawia się większe). Podstawiając wartości do wzoru dla dla statystyki $t$ otrzymujemy:
+
+$$
+t = \frac{`r m1`-`r m2`}{\sqrt{\frac{`r sp2`}{`r n1`}+\frac{`r sp2`}{`r n2`} }} = `r t_emp`.
+$$
+
+
+W związku z tym porównując do wartości krytycznej $t < t_{kr}$ odpowiadamy, że należy odrzucić hipotezę zerową ponieważ wartość statystyki jest mniejsza od wartości krytycznej. Możemy przedstawić to również graficznie.
+
+```{r zad9grahics,warning=FALSE,echo=FALSE,dev='CairoPDF',fig.width=6,fig.height=3}
+t_dens_auc(df,t_kr,t_emp,xtext=-1,alt='l')
+
+```
