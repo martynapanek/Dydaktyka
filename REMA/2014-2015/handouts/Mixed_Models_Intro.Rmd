@@ -40,7 +40,7 @@ Effect: Impact of district on Price of flat
 * $\mu_{A}$ = flat population mean price in district A
 * effect of A = $\mu_{A} - \mu$
 
-## What are mixed models ?
+## What are mixed models ? - random and fixed effects
 
 Factor effects are either fixed or random:
 
@@ -50,6 +50,13 @@ Factor effects are either fixed or random:
 Mixed models have both fixed and random effects.
 
 In our example, district is fixed since A, B, C, D, E are the only levels of interest.
+
+## What are mixed models ? - random and fixed effects
+
+Fixed effect: Something the experimenter directly manipulates and is often repeatable, e.g., drug administration - one group gets drug, one group gets placebo.
+
+Random effect: Source of random variation / experimental units e.g., individuals drawn (at random) from a population for a clinical trial. Random effects estimates the variability
+
 
 ## What are mixed models ?
 
@@ -138,10 +145,57 @@ Notation
 library(lme4)
 library(PBImisc)
 library(dplyr)
+library(ggplot2)
+library(sjPlot)
 data("apartments")
 apartments <- tbl_df(apartments)
 apartments
 ```
+
+## Mixed models in R
+
+```{r vis_inspection}
+mean_prices <- apartments %>%
+  group_by(district) %>%
+  summarise(mean = mean(m2.price),
+            n = n()) %>%
+  arrange(desc(mean)) 
+ggplot(data = mean_prices,
+       aes(x = district,
+           y = mean)) +
+  geom_bar(stat= 'identity')
+```
+
+## Mixed models in R
+
+```{r mixed_model}
+model_first <- lmer(m2.price ~ 1 + (1 | district),
+                    data = apartments)
+summary(model_first)
+```
+
+## Mixed models in R - coefficients
+
+```{r mixed_model2}
+fixef(model_first)
+ranef(model_first)
+```
+
+## Mixed models in R - coefficients plot
+
+```{r results_plot}
+sjp.lmer(model_first,sort.coef=TRUE)
+```
+
+
+
+## More to go
+
+* random slope
+* random slope and intercept
+* hierarchical linear model
+* within-group heteroscedasticity structure, within-group correlation structure
+* spatial heterogenity
 
 
 ## References
@@ -156,4 +210,4 @@ Software_, http://arxiv.org/abs/1406.5823
 6. Pinheiro JC, Bates DM (2000). Mixed-Effects Models in S and S-Plus. Springer. ISBN
 0-387-98957-0.
 7. Burzykowski, T. (2013). Linear mixed-effects models using R: a step-by-step approach. Springer Science & Business Media.
-
+8. Gelman, A. (2005). Analysis of variance—why it is more important than ever. The Annals of Statistics, 33(1), 1-53.

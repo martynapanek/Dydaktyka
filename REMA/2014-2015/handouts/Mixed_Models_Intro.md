@@ -35,7 +35,7 @@ Effect: Impact of district on Price of flat
 * $\mu_{A}$ = flat population mean price in district A
 * effect of A = $\mu_{A} - \mu$
 
-## What are mixed models ?
+## What are mixed models ? - random and fixed effects
 
 Factor effects are either fixed or random:
 
@@ -45,6 +45,13 @@ Factor effects are either fixed or random:
 Mixed models have both fixed and random effects.
 
 In our example, district is fixed since A, B, C, D, E are the only levels of interest.
+
+## What are mixed models ? - random and fixed effects
+
+Fixed effect: Something the experimenter directly manipulates and is often repeatable, e.g., drug administration - one group gets drug, one group gets placebo.
+
+Random effect: Source of random variation / experimental units e.g., individuals drawn (at random) from a population for a clinical trial. Random effects estimates the variability
+
 
 ## What are mixed models ?
 
@@ -134,6 +141,8 @@ Notation
 library(lme4)
 library(PBImisc)
 library(dplyr)
+library(ggplot2)
+library(sjPlot)
 data("apartments")
 apartments <- tbl_df(apartments)
 apartments
@@ -159,6 +168,126 @@ apartments
 ##   (dbl), lon (dbl)
 ```
 
+## Mixed models in R
+
+
+```r
+mean_prices <- apartments %>%
+  group_by(district) %>%
+  summarise(mean = mean(m2.price),
+            n = n()) %>%
+  arrange(desc(mean)) 
+ggplot(data = mean_prices,
+       aes(x = district,
+           y = mean)) +
+  geom_bar(stat= 'identity')
+```
+
+![](Mixed_Models_Intro_files/figure-html/vis_inspection-1.png) 
+
+## Mixed models in R
+
+
+```r
+model_first <- lmer(m2.price ~ 1 + (1 | district),
+                    data = apartments)
+summary(model_first)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: m2.price ~ 1 + (1 | district)
+##    Data: apartments
+## 
+## REML criterion at convergence: 17357.2
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.6978 -0.6328 -0.1385  0.4940  6.2049 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  district (Intercept) 1081627  1040    
+##  Residual             3154473  1776    
+## Number of obs: 973, groups:  district, 28
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)   7961.8      238.2   33.42
+```
+
+## Mixed models in R - coefficients
+
+
+```r
+fixef(model_first)
+```
+
+```
+## (Intercept) 
+##    7961.787
+```
+
+```r
+ranef(model_first)
+```
+
+```
+## $district
+##                     (Intercept)
+## Bemowo                192.12623
+## Bialoleka            -849.00095
+## Bielany               -25.09882
+## Brodno               -453.93226
+## Brwinow             -1255.72013
+## Grochow              -117.91072
+## Grodzisk Mazowiecki  -645.68924
+## Jozefoslaw            387.50454
+## Kabaty                355.73667
+## Karczew              -809.61464
+## Mokotow              1318.92124
+## Ochota               1150.76806
+## Praga Polnoc         -651.79297
+## Praga Poludnie       -279.49523
+## Pruszkow            -1263.83315
+## Rembertow            -732.14156
+## Srodmiescie          2622.78735
+## Tarchomin              25.58784
+## Targowek             -715.86100
+## Ursus                -352.31822
+## Ursynow               841.16286
+## Wawer                -174.91316
+## Wesola               -359.32169
+## Wilanow               325.01978
+## Wlochy                112.35876
+## Wola                  550.99620
+## Zabki                -313.76466
+## Zoliborz             1117.43884
+```
+
+## Mixed models in R - coefficients plot
+
+
+```r
+sjp.lmer(model_first,sort.coef=TRUE)
+```
+
+```
+## Plotting random effects...
+```
+
+![](Mixed_Models_Intro_files/figure-html/results_plot-1.png) 
+
+
+
+## More to go
+
+* random slope
+* random slope and intercept
+* hierarchical linear model
+* within-group heteroscedasticity structure, within-group correlation structure
+* spatial heterogenity
+
 
 ## References
 
@@ -172,4 +301,4 @@ Software_, http://arxiv.org/abs/1406.5823
 6. Pinheiro JC, Bates DM (2000). Mixed-Effects Models in S and S-Plus. Springer. ISBN
 0-387-98957-0.
 7. Burzykowski, T. (2013). Linear mixed-effects models using R: a step-by-step approach. Springer Science & Business Media.
-
+8. Gelman, A. (2005). Analysis of variance—why it is more important than ever. The Annals of Statistics, 33(1), 1-53.
