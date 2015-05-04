@@ -278,6 +278,11 @@ sjp.lmer(model_first,sort.coef=TRUE)
 
 ![](Mixed_Models_Intro_files/figure-html/results_plot-1.png) 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/master
 ## More to go
 
 * random slope

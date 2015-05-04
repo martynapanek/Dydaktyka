@@ -187,6 +187,11 @@ ranef(model_first)
 sjp.lmer(model_first,sort.coef=TRUE)
 ```
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/master
 ## More to go
 
 * random slope
