@@ -1,0 +1,212 @@
+\documentclass[hyperref={pdfpagemode=FullScreen},table,green]{beamer}
+\usepackage[polish]{babel}
+\usepackage[Cp1250]{inputenc}
+\usepackage[OT4]{fontenc}
+\usepackage{beamerthemeshadow}
+\usepackage{marvosym}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{rotating}
+\usepackage{fancyhdr}
+\usepackage{lscape}
+\usepackage{url}
+\usepackage{xcolor}
+\beamertemplateballitem
+\beamertemplatenumberedballsectiontoc
+\hypersetup{
+  pdftitle={Poznañ 2015},
+  pdfauthor={Jan Nowak}}
+\title[Uniwersytet Ekonomiczny w Poznaniu]{\Large{Tabele w pakiecie ztable}}
+
+\author[WIRDS]{Jan Nowak}
+
+\institute{
+  Analityka Gospodarcza\\Uniwersytet Ekonomiczny w~Poznaniu}
+\date{04.05.2015}
+\centering
+\newcounter{minisection}
+\newcommand{\minisectionframe}[1]{
+\frame{
+	\begin{center}
+	#1
+	\end{center}
+}}
+
+\newcommand{\smallhref}[1]{{\footnotesize\href{#1}{\url{#1}}}}
+
+\begin{document}
+
+\frame{\titlepage}
+\part{}
+\section{Plan prezentacji}
+\subsection{Plan prezentacji}
+\frame{
+\setbeamercovered{transparent}
+	\begin{enumerate}
+		\tiny{
+		\item Cel 1
+		\item Cel 2
+		\item Cel 3
+		}
+	\end{enumerate}
+	}
+
+\part{ztable}
+\section{Tabele w ztable}
+\subsection{Pierwsza tabela w ztable}
+\frame{
+\begin{block}{Pierwsza tabela w ztable}
+\begin{table}[!hbtp]
+\begin{center}
+\begin{normalsize}
+\color{black}
+\begin{tabular}{rrlrrrr}
+\hline
+&klm&woj&wojewodztwo&trb&zut&d21\\ 
+\hline
+1&1.00&02&1.00&11.00&5.00&2.00\\ 
+2&1.00&02&1.00&6.00&1.00&2.00\\ 
+3&1.00&02&1.00&3.00&1.00&1.00\\ 
+4&1.00&02&1.00&12.00&5.00&2.00\\ 
+5&1.00&02&1.00&1.00&5.00&1.00\\ 
+6&1.00&02&1.00&12.00&1.00&1.00\\ 
+\hline
+\end{tabular}
+\end{normalsize}
+\end{center}
+\end{table}
+\color{black}
+\end{block}
+}
+
+\subsection{Druga tabela w ztable}
+\frame{
+\begin{block}{Druga tabela w ztable}
+\begin{table}[!hbtp]
+\begin{center}
+\begin{normalsize}
+\color{black}
+\begin{tabular}{ccccccc}
+\hline
+&klm&woj&wojewodztwo&trb&zut&d21\\ 
+\hline
+1&1.00&02&1.00&11.00&5.00&2.00\\ 
+2&1.00&02&1.00&6.00&1.00&2.00\\ 
+3&1.00&02&1.00&3.00&1.00&1.00\\ 
+4&1.00&02&1.00&12.00&5.00&2.00\\ 
+5&1.00&02&1.00&1.00&5.00&1.00\\ 
+6&1.00&02&1.00&12.00&1.00&1.00\\ 
+\hline
+\end{tabular}
+\end{normalsize}
+\end{center}
+\end{table}
+\color{black}
+\end{block}
+}
+
+\subsection{Kolejne tabele w R i ztable}
+\frame{
+\begin{table}[!hbtp]
+\begin{center}
+\begin{normalsize}
+\color{black}
+\begin{tabular}{rrlcrrcrrc}
+\hline
+\cellcolor{white} &\multicolumn{2}{c}{Zmienna 1 i 2}&&\multicolumn{2}{c}{Zmienna 3 i 4}&&\multicolumn{2}{c}{Zmienna 5 i 6}\\ 
+\cline{2-3}\cline{5-6}\cline{8-9}
+&klm&woj&&wojewodztwo&trb&&zut&d21\\ 
+\hline
+1&1.00&02&&1.00&11.00&&5.00&2.00\\ 
+2&1.00&02&&1.00&6.00&&1.00&2.00\\ 
+3&1.00&02&&1.00&3.00&&1.00&1.00\\ 
+4&1.00&02&&1.00&12.00&&5.00&2.00\\ 
+5&1.00&02&&1.00&1.00&&5.00&1.00\\ 
+6&1.00&02&&1.00&12.00&&1.00&1.00\\ 
+\hline
+\end{tabular}
+\end{normalsize}
+\end{center}
+\end{table}
+\color{black}
+}
+
+\subsection{Model regresji w R i ztable}
+\frame{
+\begin{table}[!hbtp]
+\begin{center}
+\begin{normalsize}
+\color{black}
+\begin{tabular}{rrrrr}
+\hline
+&Oszacowanie&B³¹d&t&Pr($>|t|$)\\ 
+\hline
+(Wyraz wolny)&610.8742&15.2413&40.08&0.0000\\ 
+dochg&0.5838&0.0041&141.11&0.0000\\ 
+los&52.1508&4.2540&12.26&0.0000\\ 
+\hline
+\multicolumn{5}{l}{\footnotesize{\begin{minipage}[c]{0.564705882352941\linewidth}Call: lm(formula = wydg $\sim$ dochg + los, data = gospodarstwa)\end{minipage}}}\\ 
+\end{tabular}
+\end{normalsize}
+\end{center}
+\end{table}
+\color{black}
+}
+
+\subsection{Analiza wariancji w ztable}
+\frame{
+\begin{table}[!hbtp]
+\begin{center}
+\begin{normalsize}
+\color{black}
+\begin{tabular}{rrrrrr}
+\multicolumn{6}{l}{\footnotesize{Analiza wariancji}}\\ 
+\multicolumn{6}{l}{\footnotesize{Zmienna: klm}}\\ 
+\hline
+&Df&Sum Sq&Mean Sq&F value&$Pr(>F)$\\ 
+\hline
+wydg&1&2241.89&2241.89&702.68&0.0000\\ 
+Residuals&32449&103527.76&3.19&&\\ 
+\hline
+\end{tabular}
+\end{normalsize}
+\end{center}
+\end{table}
+\color{black}
+}
+
+\subsection{Podsumowanie}
+\frame{
+\setbeamercovered{transparent}
+	\begin{enumerate}
+		\tiny{
+		\item Wniosek 1
+		\item Wniosek 2
+		\item Wniosek 3
+		}
+	\end{enumerate}
+	}
+
+\section{Literatura}
+\subsection{Literatura}
+\frame{
+	\setbeamercovered{transparent}
+	\begin{block}{Literatura}
+\tiny{
+\begin{thebibliography}{9}
+\beamertemplatebookbibitems
+\bibitem[Cra]{Cra} Michael J. Crawley (2012), ,,\textit{The R Book}'', John Wiley \& Sons, Ltd., 2nd Edition.
+\beamertemplatearticlebibitems
+\bibitem[Keo]{Keo} Keon-Woong Moon (2015), ,,\textit{Package ztable}''.
+\end{thebibliography}}
+\end{block}
+}
+
+\section[]{}
+\subsection{}
+\frame{
+Dziêkujê za uwagê!
+}
+\end{document}
+
