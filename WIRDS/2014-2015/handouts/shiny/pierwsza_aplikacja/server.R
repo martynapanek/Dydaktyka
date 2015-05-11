@@ -3,6 +3,9 @@ load('gospodarstwa.rda')
 
 shinyServer(
   function(input,output) {
+    woj_value <- reactive({
+      
+    })
     x <- gosp$dochg
     ### tworzymy wykres
     output$wykres <- renderPlot(
