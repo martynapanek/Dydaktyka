@@ -2,8 +2,11 @@
 title: "Shiny - wprowadzenie"
 author: "Maciej Beręsewicz"
 date: "10 May 2015"
-output: ioslides_presentation
+output: 
+    ioslides_presentation:
+        css: custom.css
 ---
+
 
 ## Czym jest shiny?
 
@@ -16,6 +19,15 @@ runExample("01_hello")
 
 ## Czym jest shiny?
 
+![przyklad1](census.png)
+
+## Czym jest shiny?
+
+![przyklad1](stock.png)
+
+## Czym jest shiny?
+
+![przyklad1](partie.png)
 
 ## Budowa aplikacji
 
@@ -103,7 +115,19 @@ runGitHub() ## z github
 runUrl() ## z URL
 ```
 
-## Przykłady wbudowane
+## Jak pracować z shiny?
+
+Musimy sobie odpowiedzieć na następujące pytania:
+
+1. Kto będzie odbiorcą aplikacji?
+2. Co ma zawierać aplikacja? Wizualizacje czy raporty?
+3. Jakie elementy mogę być zmieniane?
+4. Jaki ma być układ aplikacji?
+5. Jakie elementy mają być przekazywane z UI do serwera?
+
+Zaczynamy od określenia pliku `server.R`, a dopiero później przechodzimy do budowy `ui.r`!
+
+## Jak zacząć? Przykłady wbudowane
 
 ```{r examples_buildin,eval=FALSE}
 system.file("examples", package="shiny")
@@ -120,6 +144,16 @@ runExample("09_upload") # file upload wizard
 runExample("10_download") # file download wizard
 runExample("11_timer") # an automated timer
 ```
+
+## Jak zacząć? Pomoc
+
+* [Shiny cheatsheet](http://shiny.rstudio.com/articles/cheatsheet.html)
+* [Tutorial od RStudio](http://shiny.rstudio.com/tutorial/)
+* [Shiny na Stackoverflow](http://stackoverflow.com/questions/tagged/r+shiny)
+* [Budowanie aplikacji w Shiny](https://www.udemy.com/build-web-apps-in-r-with-shiny/)
+* [Oficjalna pomoc do Shiny](http://shiny.rstudio.com/help/)
+* [Przykłady aplikacji Shiny](http://www.showmeshiny.com)
+* [Shiny w j.polskim - książka Przemka Biecka]()
 
 ## Przykłady własne
 
