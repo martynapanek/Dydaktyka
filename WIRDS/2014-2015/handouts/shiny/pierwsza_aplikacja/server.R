@@ -6,7 +6,8 @@ shinyServer(
     ### tworzymy wykres
     output$wykres <- renderPlot(
       {
-        hist(x)
+        z <- x[ x>= input$zakres[1] & x <= input$zakres[2]]
+        hist(z)
       }
     )
     ### tworzymy podsumowanie
