@@ -3,13 +3,15 @@ load('gospodarstwa.rda')
 
 shinyServer(
   function(input,output) {
-    woj_value <- reactive({
-      
+    
+    x <-  reactive({ 
+      gosp$dochg[gosp$woj == input$woj]
     })
-    x <- gosp$dochg
+    
     ### tworzymy wykres
     output$wykres <- renderPlot(
       {
+        x <- x()
         z <- x[ x>= input$zakres[1] & x <= input$zakres[2]]
         hist(z)
       }
@@ -17,6 +19,7 @@ shinyServer(
     ### tworzymy podsumowanie
     output$podsumowanie <- renderPrint(
       {
+        x <- x()
         y <- summary(x)
         print(y)
       }
