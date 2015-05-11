@@ -1,8 +1,9 @@
 library(shiny)
+load('gospodarstwa.rda')
 
 shinyServer(
   function(input,output) {
-    x <- rnorm(n = 100)
+    x <- gosp$dochg
     ### tworzymy wykres
     output$wykres <- renderPlot(
       {
