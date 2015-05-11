@@ -16,16 +16,6 @@ output:
 
 ## What are mixed models ?
 
-There are many varieties of mixed models:
-
-* Linear mixed models (LMM)
-* Nonlinear mixed models (NLM)
-* Generalized linear mixed models (GLMM)
-
-We will focus only on Linear mixed models
-
-## What are mixed models ?
-
 Suppose we have a flat that are located in five districts (A, B, C, D, E) and we think that such location will have influence on the price.
 
 Response: Price of flat
@@ -126,6 +116,16 @@ $$
 cor = \frac{\sigma^2_b}{\sigma^2_b+ \sigma^2}
 $$
 
+## What are mixed models ?
+
+There are many varieties of mixed models:
+
+* Linear mixed models (LMM)
+* Nonlinear mixed models (NLM)
+* Generalized linear mixed models (GLMM)
+
+Today, we will focus only on Linear mixed models
+
 ## Mixed models in R
 
 * package lme4 - linear mixed models, function lmer
@@ -141,7 +141,7 @@ Notation
 
 ## Mixed models in R
 
-```{r message=FALSE}
+```{r message=FALSE,size='scriptsize'}
 library(lme4)
 library(PBImisc)
 library(dplyr)
@@ -149,17 +149,26 @@ library(ggplot2)
 library(sjPlot)
 data("apartments")
 apartments <- tbl_df(apartments)
+```
+
+## Mixed models in R
+
+```{r, echo=FALSE}
 apartments
 ```
 
 ## Mixed models in R
 
-```{r vis_inspection}
+```{r vis_inspection,size='small'}
 mean_prices <- apartments %>%
   group_by(district) %>%
   summarise(mean = mean(m2.price),
             n = n()) %>%
   arrange(desc(mean)) 
+```
+
+## Mixed models in R
+```{r, echo=FALSE}
 ggplot(data = mean_prices,
        aes(x = district,
            y = mean)) +
@@ -168,22 +177,27 @@ ggplot(data = mean_prices,
 
 ## Mixed models in R
 
-```{r mixed_model}
+```{r mixed_model,size='small'}
 model_first <- lmer(m2.price ~ 1 + (1 | district),
                     data = apartments)
 summary(model_first)
 ```
 
+## Mixed models in R
+```{r, echo=FALSE}
+summary(model_first)
+```
+
 ## Mixed models in R - coefficients
 
-```{r mixed_model2}
+```{r mixed_model2,size='small'}
 fixef(model_first)
 ranef(model_first)
 ```
 
 ## Mixed models in R - coefficients plot
 
-```{r results_plot}
+```{r results_plot,size='small'}
 sjp.lmer(model_first,sort.coef=TRUE)
 ```
 

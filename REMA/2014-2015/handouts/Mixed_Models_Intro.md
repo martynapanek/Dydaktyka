@@ -11,16 +11,6 @@ Maciej Beręsewicz
 
 ## What are mixed models ?
 
-There are many varieties of mixed models:
-
-* Linear mixed models (LMM)
-* Nonlinear mixed models (NLM)
-* Generalized linear mixed models (GLMM)
-
-We will focus only on Linear mixed models
-
-## What are mixed models ?
-
 Suppose we have a flat that are located in five districts (A, B, C, D, E) and we think that such location will have influence on the price.
 
 Response: Price of flat
@@ -121,6 +111,16 @@ $$
 cor = \frac{\sigma^2_b}{\sigma^2_b+ \sigma^2}
 $$
 
+## What are mixed models ?
+
+There are many varieties of mixed models:
+
+* Linear mixed models (LMM)
+* Nonlinear mixed models (NLM)
+* Generalized linear mixed models (GLMM)
+
+Today, we will focus only on Linear mixed models
+
 ## Mixed models in R
 
 * package lme4 - linear mixed models, function lmer
@@ -145,8 +145,10 @@ library(ggplot2)
 library(sjPlot)
 data("apartments")
 apartments <- tbl_df(apartments)
-apartments
 ```
+
+## Mixed models in R
+
 
 ```
 ## Source: local data frame [973 x 16]
@@ -177,13 +179,10 @@ mean_prices <- apartments %>%
   summarise(mean = mean(m2.price),
             n = n()) %>%
   arrange(desc(mean)) 
-ggplot(data = mean_prices,
-       aes(x = district,
-           y = mean)) +
-  geom_bar(stat= 'identity')
 ```
 
-![](Mixed_Models_Intro_files/figure-html/vis_inspection-1.png) 
+## Mixed models in R
+![](Mixed_Models_Intro_files/figure-html/unnamed-chunk-3-1.png) 
 
 ## Mixed models in R
 
@@ -193,6 +192,30 @@ model_first <- lmer(m2.price ~ 1 + (1 | district),
                     data = apartments)
 summary(model_first)
 ```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: m2.price ~ 1 + (1 | district)
+##    Data: apartments
+## 
+## REML criterion at convergence: 17357.2
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.6978 -0.6328 -0.1385  0.4940  6.2049 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  district (Intercept) 1081627  1040    
+##  Residual             3154473  1776    
+## Number of obs: 973, groups:  district, 28
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)   7961.8      238.2   33.42
+```
+
+## Mixed models in R
 
 ```
 ## Linear mixed model fit by REML ['lmerMod']
@@ -278,11 +301,6 @@ sjp.lmer(model_first,sort.coef=TRUE)
 
 ![](Mixed_Models_Intro_files/figure-html/results_plot-1.png) 
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> origin/master
 ## More to go
 
 * random slope
