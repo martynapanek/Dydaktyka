@@ -2,10 +2,18 @@ library(shiny)
 
 shinyServer(
   function(input,output) {
+    x <- rnorm(n = 100)
+    ### tworzymy wykres
     output$wykres <- renderPlot(
       {
-        x <- rnorm(n = 100)
         hist(x)
+      }
+    )
+    ### tworzymy podsumowanie
+    output$podsumowanie <- renderPrint(
+      {
+        y <- summary(x)
+        print(y)
       }
     )
   }

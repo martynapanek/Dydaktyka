@@ -6,13 +6,15 @@ shinyUI(
     
     sidebarLayout(
       ### określamy jakie elementy może użytkownik wybrać
-      sidebarPanel(),
+      sidebarPanel(
+        
+      ),
       
       ### główny wykres
       mainPanel(
-        plotOutput('wykres')
+        plotOutput('wykres'),
+        verbatimTextOutput('podsumowanie')
       )
-      
     )
   )
 )
