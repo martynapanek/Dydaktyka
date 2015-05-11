@@ -11,6 +11,7 @@ output:
 ## Czym jest shiny?
 
 * Shiny to pakiet, który umożliwia w prosty sposób tworzenie interaktywnych aplikacji (webowych) z poziomu R.
+* Nie jest wymagana znajomość HTML, JavaScript, CSS czy Bootstrap.
 
 ```{r example01,eval=FALSE}
 library(shiny)
@@ -153,7 +154,7 @@ runExample("11_timer") # an automated timer
 * [Budowanie aplikacji w Shiny](https://www.udemy.com/build-web-apps-in-r-with-shiny/)
 * [Oficjalna pomoc do Shiny](http://shiny.rstudio.com/help/)
 * [Przykłady aplikacji Shiny](http://www.showmeshiny.com)
-* [Shiny w j.polskim - książka Przemka Biecka]()
+* [Shiny w j.polskim - książka Przemka Biecka, rozdział 2.7 ](http://biecek.pl/R/PrzewodnikPoPakiecieRWydanieIIIinternet.pdf)
 
 ## Przykłady własne
 
