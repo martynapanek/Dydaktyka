@@ -165,20 +165,24 @@ ggplot(data = baltimore,
   theme_bw()
 ```
 
-### GWR in R
+## GWR in R
 
-```{r gwr}
+```{r gwr,message=FALSE}
 col.bw <- gwr.sel(PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
      NSTOR + GAR + CITCOU + LOTSZ + SQFT  ,data = baltimore,
   coords=cbind(baltimore$X, baltimore$Y))
+```
+
+## GWR in R
+
+```{r gwr2,message=FALSE}
 col.gauss <- gwr(PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
      NSTOR + GAR + CITCOU + LOTSZ + SQFT, data=baltimore,
   coords=cbind(baltimore$X, baltimore$Y), bandwidth=col.bw, hatmatrix=TRUE)
-
-
+col.gauss
 ```
 
-### GWR in R
+## GWR in R
 
 ```{r results}
 d <- col.gauss$SDF@data$FIREPL
@@ -192,6 +196,7 @@ ggplot(data = baltimore,
   theme_bw()
 ```
 
+## GWR in R
 
 ```{r results2}
 d <- col.gauss$SDF@data$NSTOR
