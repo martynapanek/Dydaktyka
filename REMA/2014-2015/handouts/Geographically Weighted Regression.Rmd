@@ -1,0 +1,206 @@
+---
+title: "Spatial Models in R"
+author: "Maciej Beręsewicz"
+date: "15 May 2015"
+output: ioslides_presentation
+---
+
+```{r echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
+library(knitr)
+library(PBImisc)
+library(ggplot2)
+library(foreign)
+library(dplyr)
+library(spgwr)
+knitr::opts_chunk$set(echo=FALSE,message=FALSE,warning=FALSE,error=FALSE)
+```
+
+
+## Agenda
+
+1. Geographically weighted regression (GWR)
+2. Notation for the model
+3. Interpretation of parameters
+4. GWR in R
+5. References
+
+
+## Spatial analysis
+
+1. Polygon data analysis -- requires information about membership in area (eg. voievodships, provinces)
+2. Point data analysis -- requires information about location of each point
+
+## Basic spatial models 
+
+
+
+## Geographically weighted regression
+
+* Geographically weighted regression (GWR) is an exploratory technique mainly intended to indicate where non-stationarity is taking place on the map, that is where locally weighted regression coefficients move away from their global values.
+
+* Its basis is the concern that the fitted coefficient values of a global model, fitted to all the data, may not represent detailed local variations in the data adequately – in this it follows other local regression implementations.
+
+* **We use it to explore spatial non-stationarity**
+
+## Geographically weighted regression - notation
+
+In general we can start with the following model
+
+$$
+y_i = a_{i0} + a_{i1}x_{i1} + a_{i2}x_{i2} + \ldots + a_{ik}x_{ik} + e_i
+$$
+
+We can consider the following cases:
+
+a) parameters are constant for all observations (fixed)
+b) parameters can be different for each observation (random)
+
+We can estimate parameters using simple OLS estimator
+
+$$
+\mathbf{a} = (\mathbf{X}^TX)^{-1}\mathbf{X}^T\mathbf{Y}
+$$
+
+## Geographically weighted regression - notation
+
+However, we know that when we have problems with heterogenous variance we should use weighted least squares (WLS) to estimate parameters
+
+$$
+\mathbf{a} = (\mathbf{X}^T\mathbf{WX})^{-1}\mathbf{X}^T\mathbf{WY}
+$$
+
+## Geographically weighted regression - notation
+
+In GWR, weighting an observation in accordance with its proximity to $i$ would allow an estimation of $a_{ik}$ to be made that meets the criterion of ''closeness of calibration points'' set out above.
+
+Note that usually in weighted regression models the values of wi are constant, so that only one calibration has to be carried out to obtain a set of coefficient estimates, but in this case w varies with i so that a different calibration exists for every point in the study area. In this case, the parameter estimation formula could be written more generally as
+
+$$
+\mathbf{a}(i) = (\mathbf{X}^T\mathbf{W}(i)\mathbf{X})^{-1}\mathbf{X}^T\mathbf{W}(i)\mathbf{Y}
+$$
+
+## Geographically weighted regression - weight matrix
+
+We can consider the following settings for weights
+
+* $w_{ij}=1, \forall i, j$
+
+* $w_{ij} = 1$ if $d_{ij} < d$, otherwise $w_{ij}=0$
+
+* $w_{ij} = exp(-(d_{ij}/d)^2)$ - Gaussian weighting function
+
+* $w_{ij} = [1- (d_{ij}/d)^2]^2$ if $d_{ij} < d$, otherwise $w_{ij}=0$
+
+$d$ refers to bandwidth which is selected by minimizing $\sum (y_i - y_i^*(d))^2$.
+
+## Geographically weighted regression -- highlights
+
+* GWR allows to take into account spatial heterogenity
+* GWR allows to take into account assumption that coefficient vary in space
+* GWR will give information about possible
+
+
+## Visualisation of results
+
+
+```{r data,echo=FALSE,message=FALSE,warning=FALSE}
+
+baltimore <- read.dbf('/Users/MaciejBeresewicz/Documents/Projects/RProjects/Dydaktyka/REMA/2014-2015/datasets/baltim.dbf') %>%
+  tbl_df()
+
+ggplot(data = baltimore,
+         aes(x = X,
+             y = Y,
+             colour = log(PRICE))) +
+  geom_point(size=15,alpha=.7) + 
+  theme_bw()
+```
+
+
+
+## Information about dataset
+
+Topic: House sales price and characteristics for a spatial hedonic regression, Baltimore, MD 1978.
+Source : Original data made available by Robin Dubin, Weatherhead School of Management, Case Western Research University, Cleveland, OH, Robin.Dubin@weatherhead.cwru.edu.
+Reference: Dubin, Robin A. (1992). Spatial autocorrelation and neighborhood quality. Regional Science and Urban Economics 22(3), 433-452.
+
+## Information about dataset
+
+* STATION	ID variable
+* PRICE - sales price of house iin $1,000 (MLS)
+* NROOM - number of rooms
+* DWELL - 1 if detached unit, 0 otherwise
+* NBATH - number of bathrooms
+* PATIO - 1 if patio, 0 otherwise
+* FIREPL - 1 if fireplace, 0 otherwise
+* AC - 1 if air conditioning, 0 otherwise
+* BMENT - 1 if basement, 0 otherwise
+* NSTOR - number of stories
+* GAR - number of car spaces in garage (0 = no garage)
+* AGE - age of dwelling in years
+* CITCOU - 1 if dwelling is in Baltimore County, 0 otherwise
+* LOTSZ - lot size in hundreds of square feet
+* SQFT - interior living space in hundreds of square feet
+* X - x coordinate on the Maryland grid
+* Y - y coordinate on the Maryland grid
+
+## Simple linear regression
+
+```{r lm}
+model <- lm(PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
+     NSTOR + GAR + CITCOU + LOTSZ + SQFT  ,data = baltimore) 
+model %>% summary()
+baltimore <- baltimore %>%
+  mutate(resid = resid(model))
+```
+
+## Visualisation of residuals
+
+```{r residuals}
+ggplot(data = baltimore,
+         aes(x = X,
+             y = Y,
+             colour = resid)) +
+  geom_point(size=10,alpha=1) + 
+  theme_bw()
+```
+
+### GWR in R
+
+```{r gwr}
+col.bw <- gwr.sel(PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
+     NSTOR + GAR + CITCOU + LOTSZ + SQFT  ,data = baltimore,
+  coords=cbind(baltimore$X, baltimore$Y))
+col.gauss <- gwr(PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
+     NSTOR + GAR + CITCOU + LOTSZ + SQFT, data=baltimore,
+  coords=cbind(baltimore$X, baltimore$Y), bandwidth=col.bw, hatmatrix=TRUE)
+
+
+```
+
+### GWR in R
+
+```{r results}
+d <- col.gauss$SDF@data$FIREPL
+baltimore <- baltimore %>%
+  mutate(FIREPL = d)
+ggplot(data = baltimore,
+         aes(x = X,
+             y = Y,
+             colour = FIREPL)) +
+  geom_point(size=10,alpha=1) + 
+  theme_bw()
+```
+
+
+```{r results2}
+d <- col.gauss$SDF@data$NSTOR
+baltimore <- baltimore %>%
+  mutate(NSTOR = d)
+ggplot(data = baltimore,
+         aes(x = X,
+             y = Y,
+             colour = NSTOR)) +
+  geom_point(size=10,alpha=1) + 
+  theme_bw()
+```
