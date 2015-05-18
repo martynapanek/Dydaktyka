@@ -7,8 +7,8 @@ Maciej Beręsewicz
 
 ## Agenda
 
-1. Geographically weighted regression (GWR)
-2. Notation for the model
+1. Spatial models
+2. Geographically weighted regression (GWR)
 3. Interpretation of parameters
 4. GWR in R
 5. References
@@ -16,12 +16,45 @@ Maciej Beręsewicz
 
 ## Spatial analysis
 
-1. Polygon data analysis -- requires information about membership in area (eg. voievodships, provinces)
+Waldo Tobler (1970)
+
+> Everything is related to everything else, but near things are more related than distant things.
+
+1. Polygon/Area data analysis -- requires information about membership in area (eg. voievodships, provinces)
 2. Point data analysis -- requires information about location of each point
+
+## Spatial Correlation
+
+![models](spcor.jpg)
+
+## Spatial Correlation
+
+![models](electionspoland.png)
+
 
 ## Basic spatial models 
 
+* Spatial Autocorrelation Model (SAR Lag)
+* Spatial Error Model (SAR Error)
+* Spatial Autocorrelation and Error Model (SAR Lag and Error)
 
+![models](models.png )
+
+
+
+## Basic spatial models - literature
+
+Please refer to book Bivand, R. S., Pebesma, E., & Gómez-Rubio, V. (2013). Applied spatial data analysis with R (Vol. 10). Springer Science & Business Media.
+
+![models](gwrbook.jpg)
+
+## Basic spatial models - literature (in Polish)
+
+![models](ep1.png)
+
+## Basic spatial models - literature (in Polish)
+
+![models](ep2.jpg)
 
 ## Geographically weighted regression
 
@@ -169,7 +202,6 @@ $$
 * GWR allows to take into account spatial heterogenity
 * GWR allows to take into account assumption that coefficient vary in space
 * GWR will give information about possible
-
 
 ## Visualisation of results
 
@@ -323,3 +355,16 @@ Reference: Dubin, Robin A. (1992). Spatial autocorrelation and neighborhood qual
 ## GWR in R
 
 ![](Geographically_Weighted_Regression_files/figure-slidy/results2-1.png) 
+
+## References
+
+1. Anselin, L (1992) Spatial econometrics. Methods and models. Kluwer Academic, Boston
+2. Brundson, C, Fotheringham, AS, Charlton, M (1996) Geographically weighted regression: a method for exploring spatial nonstationarity. Geogr. Anal. 28: pp. 281-298
+3. Fotheringham, AS, Brundson, C, Charlton, M (2002) Geographically weighted regression. Wiley, West Sussex
+4. Salvati, N., Tzavidis, N., Pratesi, M., & Chambers, R. (2012). Small area estimation via M-quantile geographically weighted regression. Test, 21(1), 1-28.
+5. Szymanowski, M., & Kryza, M. (2011). ZASTOSOWANIE REGRESJI WAŻONEJ GEOGRAFICZNIE DO INTERPOLACJI PRZESTRZENNEJ MIEJSKIEJ WYSPY CIEPŁA WE WROCŁAWIU. Prace i Studia Geograficzne, 47, 417-423.
+5. R Core Team (2015). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL http://www.R-project.org/.
+6. Roger Bivand and Danlin Yu (2014). spgwr: Geographically weighted regression. R package version 0.6-26. http://CRAN.R-project.org/package=spgwr
+7. Suchecki, B. (Ed.). (2010). Ekonometria przestrzenna: metody i modele analizy danych przestrzennych. Wydawnictwo CH Beck.
+8. Suchecki, B. (Ed.). (2012) Ekonometria przestrzenna II: modele zaawansowane. Wydawnictwo CH Beck, 2012.
+
