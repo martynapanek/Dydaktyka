@@ -1,24 +1,8 @@
----
-title: "Spatial Models in R"
-author: "Maciej Beręsewicz"
-date: "15 May 2015"
-output:
-  slidy_presentation: 
-    keep_md: yes
-  ioslides_presentation:
-    in_header: \usepackage{amsmath}
-    keep_md: yes
----
+# Spatial Models in R
+Maciej Beręsewicz  
+15 May 2015  
 
-```{r echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
-library(knitr)
-library(PBImisc)
-library(ggplot2)
-library(foreign)
-library(dplyr)
-library(spgwr)
-knitr::opts_chunk$set(echo=FALSE,message=FALSE,warning=FALSE,error=FALSE)
-```
+
 
 
 ## Agenda
@@ -190,18 +174,7 @@ $$
 ## Visualisation of results
 
 
-```{r data,echo=FALSE,message=FALSE,warning=FALSE}
-
-baltimore <- read.dbf('/Users/MaciejBeresewicz/Documents/Projects/RProjects/Dydaktyka/REMA/2014-2015/datasets/baltim.dbf') %>%
-  tbl_df()
-
-ggplot(data = baltimore,
-         aes(x = X,
-             y = Y,
-             colour = log(PRICE))) +
-  geom_point(size=15,alpha=.7) + 
-  theme_bw()
-```
+![](Geographically_Weighted_Regression_files/figure-slidy/data-1.png) 
 
 
 
@@ -233,66 +206,120 @@ Reference: Dubin, Robin A. (1992). Spatial autocorrelation and neighborhood qual
 
 ## Simple linear regression
 
-```{r lm}
-model <- lm(PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
-     NSTOR + GAR + CITCOU + LOTSZ + SQFT  ,data = baltimore) 
-model %>% summary()
-baltimore <- baltimore %>%
-  mutate(resid = resid(model))
+
+```
+## 
+## Call:
+## lm(formula = PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
+##     NSTOR + GAR + CITCOU + LOTSZ + SQFT, data = baltimore)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -35.351  -6.600  -0.896   6.124  74.261 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  8.00529    5.50218   1.455 0.147264    
+## DWELL        6.36037    2.55389   2.490 0.013576 *  
+## NBATH        6.18702    1.83627   3.369 0.000905 ***
+## PATIO        9.43528    2.76449   3.413 0.000778 ***
+## FIREPL      10.76620    2.44020   4.412 1.68e-05 ***
+## AC           8.24456    2.30796   3.572 0.000444 ***
+## BMENT        3.81140    1.00446   3.794 0.000196 ***
+## NSTOR       -4.27379    2.84687  -1.501 0.134882    
+## GAR          5.60412    1.71134   3.275 0.001248 ** 
+## CITCOU      12.42270    2.17455   5.713 4.01e-08 ***
+## LOTSZ        0.03536    0.01714   2.063 0.040443 *  
+## SQFT         0.38175    0.21273   1.795 0.074245 .  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 12.6 on 199 degrees of freedom
+## Multiple R-squared:   0.73,	Adjusted R-squared:  0.7151 
+## F-statistic: 48.92 on 11 and 199 DF,  p-value: < 2.2e-16
 ```
 
 ## Visualisation of residuals
 
-```{r residuals}
-ggplot(data = baltimore,
-         aes(x = X,
-             y = Y,
-             colour = resid)) +
-  geom_point(size=10,alpha=1) + 
-  theme_bw()
+![](Geographically_Weighted_Regression_files/figure-slidy/residuals-1.png) 
+
+## GWR in R
+
+
+```
+## Bandwidth: 56.69026 CV score: 36351.51 
+## Bandwidth: 91.63518 CV score: 37637.86 
+## Bandwidth: 35.0931 CV score: 34314.3 
+## Bandwidth: 21.74533 CV score: 32481.94 
+## Bandwidth: 13.49595 CV score: 32949 
+## Bandwidth: 20.77383 CV score: 32394.68 
+## Bandwidth: 19.02757 CV score: 32288.25 
+## Bandwidth: 16.91468 CV score: 32280.53 
+## Bandwidth: 17.84809 CV score: 32263.26 
+## Bandwidth: 17.87388 CV score: 32263.3 
+## Bandwidth: 17.82144 CV score: 32263.24 
+## Bandwidth: 17.8171 CV score: 32263.24 
+## Bandwidth: 17.8172 CV score: 32263.24 
+## Bandwidth: 17.81725 CV score: 32263.24 
+## Bandwidth: 17.81716 CV score: 32263.24 
+## Bandwidth: 17.8172 CV score: 32263.24
 ```
 
 ## GWR in R
 
-```{r gwr,message=FALSE}
-col.bw <- gwr.sel(PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
-     NSTOR + GAR + CITCOU + LOTSZ + SQFT  ,data = baltimore,
-  coords=cbind(baltimore$X, baltimore$Y))
+
+```
+## Call:
+## gwr(formula = PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
+##     NSTOR + GAR + CITCOU + LOTSZ + SQFT, data = baltimore, coords = cbind(baltimore$X, 
+##     baltimore$Y), bandwidth = col.bw, hatmatrix = TRUE)
+## Kernel function: gwr.Gauss 
+## Fixed bandwidth: 17.8172 
+## Summary of GWR coefficient estimates at data points:
+##                    Min.    1st Qu.     Median    3rd Qu.       Max.
+## X.Intercept. -13.050000  -9.548000   0.274000  13.950000  37.770000
+## DWELL         -8.052000   4.674000   6.793000   8.951000  12.190000
+## NBATH          0.667400   5.116000   6.342000   6.946000   9.431000
+## PATIO         -5.532000   3.697000   6.452000   9.648000  12.160000
+## FIREPL         2.690000   7.705000  11.800000  13.410000  14.830000
+## AC             2.880000   5.978000   7.174000   8.942000  13.610000
+## BMENT         -0.098190   3.314000   4.060000   5.332000   6.550000
+## NSTOR        -22.410000  -7.504000   1.893000   6.142000   9.463000
+## GAR           -0.406400   1.710000   3.275000   5.643000  14.350000
+## CITCOU         5.435000  10.690000  13.850000  15.100000  18.340000
+## LOTSZ         -0.062190   0.006956   0.048210   0.077330   0.098300
+## SQFT          -0.303100  -0.120500   0.042610   0.490100   2.588000
+##               Global
+## X.Intercept.  8.0053
+## DWELL         6.3604
+## NBATH         6.1870
+## PATIO         9.4353
+## FIREPL       10.7662
+## AC            8.2446
+## BMENT         3.8114
+## NSTOR        -4.2738
+## GAR           5.6041
+## CITCOU       12.4227
+## LOTSZ         0.0354
+## SQFT          0.3818
+## Number of data points: 211 
+## Effective number of parameters (residual: 2traceS - traceS'S): 63.19148 
+## Effective degrees of freedom (residual: 2traceS - traceS'S): 147.8085 
+## Sigma (residual: 2traceS - traceS'S): 10.6491 
+## Effective number of parameters (model: traceS): 47.53632 
+## Effective degrees of freedom (model: traceS): 163.4637 
+## Sigma (model: traceS): 10.12633 
+## Sigma (ML): 8.912952 
+## AICc (GWR p. 61, eq 2.33; p. 96, eq. 4.21): 1648.773 
+## AIC (GWR p. 96, eq. 4.22): 1569.456 
+## Residual sum of squares: 16761.99 
+## Quasi-global R2: 0.8567619
 ```
 
 ## GWR in R
 
-```{r gwr2,message=FALSE}
-col.gauss <- gwr(PRICE ~ DWELL + NBATH + PATIO + FIREPL + AC + BMENT + 
-     NSTOR + GAR + CITCOU + LOTSZ + SQFT, data=baltimore,
-  coords=cbind(baltimore$X, baltimore$Y), bandwidth=col.bw, hatmatrix=TRUE)
-col.gauss
-```
+![](Geographically_Weighted_Regression_files/figure-slidy/results-1.png) 
 
 ## GWR in R
 
-```{r results}
-d <- col.gauss$SDF@data$FIREPL
-baltimore <- baltimore %>%
-  mutate(FIREPL = d)
-ggplot(data = baltimore,
-         aes(x = X,
-             y = Y,
-             colour = FIREPL)) +
-  geom_point(size=10,alpha=1) + 
-  theme_bw()
-```
-
-## GWR in R
-
-```{r results2}
-d <- col.gauss$SDF@data$NSTOR
-baltimore <- baltimore %>%
-  mutate(NSTOR = d)
-ggplot(data = baltimore,
-         aes(x = X,
-             y = Y,
-             colour = NSTOR)) +
-  geom_point(size=10,alpha=1) + 
-  theme_bw()
-```
+![](Geographically_Weighted_Regression_files/figure-slidy/results2-1.png) 
