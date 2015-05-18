@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title>HTML Documents</title>
+
+<script src="libs/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.1/css/united.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">
+
+/* padding for bootstrap navbar */
+body {
+  padding-top: 50px;
+  padding-bottom: 40px;
+}
+
+
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h2 {
+  padding-top: 55px;
+  margin-top: -55px;
+}
+.section h3 {
+  padding-top: 55px;
+  margin-top: -55px;
+}
+
+
+
+/* don't use link color in navbar */
+.dropdown-menu>li>a {
+  color: black;
+}
+
+/* some padding for disqus */
+#disqus_thread {
+  margin-top: 45px;
+}
+
+</style>
+
+<link rel="stylesheet" href="libs/font-awesome-4.1.0/css/font-awesome.min.css"/>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="libs/highlight/textmate.css"
+      type="text/css" />
+<script src="libs/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">R Markdown v2</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li class="dropdown">
+          <a href="authoring" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Authoring <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+             <li class="dropdown-header">R Markdown</li>
+             <li><a href="authoring_basics.html">Markdown Basics</a></li>
+             <li><a href="authoring_pandoc_markdown.html">Pandoc Markdown</a></li>
+             <li><a href="authoring_rcodechunks.html">R Code Chunks</a></li>
+             <li><a href="authoring_bibliographies_and_citations.html">Bibliographies &amp; Citations</a></li>
+             <li><a href="authoring_migrating_from_v1.html">Migrating from v1</a></li>
+             <li class="divider"></li>
+             <li><a href="http://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf">Cheat Sheet [PDF]</a></li>
+             <li><a href="http://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf">Reference Guide [PDF]</a></li>
+             <li class="divider"></li>
+             <li class="dropdown-header">Shiny</li>
+             <li><a href="authoring_shiny.html">Interactive Documents</a></li>
+             <li><a href="authoring_embedded_shiny.html">Embedded Shiny Apps</a></li>
+             <li><a href="authoring_shiny_widgets.html">Creating Shiny Widgets</a></li>
+             <li><a href="authoring_shiny_advanced.html">Advanced Topics</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="formats" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Formats <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+             <li class="dropdown-header">Documents</li>
+             <li><a href="html_document_format.html">HTML</a></li>
+             <li><a href="pdf_document_format.html">PDF</a></li>
+             <li><a href="word_document_format.html">Word</a></li>
+             <li><a href="markdown_document_format.html">Markdown</a></li>
+             <li class="divider"></li>
+             <li class="dropdown-header">Presentations</li>
+             <li><a href="ioslides_presentation_format.html">ioslides</a></li>
+             <li><a href="slidy_presentation_format.html">Slidy</a></li>
+             <li><a href="beamer_presentation_format.html">Beamer</a></li>
+             <li class="divider"></li>
+             <li class="dropdown-header">Other</li>
+             <li><a href="package_vignette_format.html">Package Vignette</a></li>
+             <li><a href="tufte_handout_format.html">Tufte Handout</a></li>
+             <li class="divider"></li>
+             <li><a href="r_notebook_format.html">R Notebooks</a></li>
+          </ul>
+        </li>
+         <li class="dropdown">
+          <a href="developer" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Developer <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+             <li><a href="developer_html_widgets.html">HTML Widgets</a></li>
+             <li class="divider"></li>
+             <li><a href="developer_parameterized_reports.html">Parameterized Reports</a></li>
+             <li class="divider"></li>
+             <li><a href="developer_document_templates.html">Document Templates</a></li>
+             <li><a href="developer_custom_formats.html">Creating New Formats</a></li>
+             <li class="divider"></li>
+             <li><a href="https://github.com/rstudio/rmarkdown">R Markdown on GitHub</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+<h1 class="title">HTML Documents</h1>
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#table-of-contents">Table of Contents</a></li>
+<li><a href="#appearance-and-style">Appearance and Style</a></li>
+<li><a href="#figure-options">Figure Options</a></li>
+<li><a href="#mathjax-equations">MathJax Equations</a></li>
+<li><a href="#document-dependencies">Document Dependencies</a></li>
+<li><a href="#advanced-customization">Advanced Customization</a></li>
+<li><a href="#shared-options">Shared Options</a></li>
+<li><a href="#html-fragments">HTML Fragments</a></li>
+<li><a href="#creating-a-website">Creating a Website</a></li>
+</ul>
+</div>
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>To create an HTML document from R Markdown you specify the <code>html_document</code> output format in the front-matter of your document:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+author: John Doe
+date: March 22, 2005
+output: html_document
+---</code></pre>
+</div>
+<div id="table-of-contents" class="section level2">
+<h2>Table of Contents</h2>
+<p>You can add a table of contents using the <code>toc</code> option and specify the depth of headers that it applies to using the <code>toc_depth</code> option. For example:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---</code></pre>
+<p>If the table of contents depth isn’t explicitly specified then it defaults to 3 (meaning that all level 1, 2, and 3 headers will be included in the table of contents).</p>
+<p>You can add section numbering to headers using the <code>number_sections</code> option:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    toc: true
+    number_sections: true
+---</code></pre>
+</div>
+<div id="appearance-and-style" class="section level2">
+<h2>Appearance and Style</h2>
+<p>There are several options that control the appearance of HTML documents:</p>
+<ul>
+<li><p><code>theme</code> specifies the Bootstrap theme to use for the page (themes are drawn from the <a href="http://bootswatch.com/">Bootswatch</a> theme library). Valid themes include <code>&quot;default&quot;</code>, <code>&quot;cerulean&quot;</code>, <code>&quot;journal&quot;</code>, <code>&quot;flatly&quot;</code>, <code>&quot;readable&quot;</code>, <code>&quot;spacelab&quot;</code>, <code>&quot;united&quot;</code>, and <code>&quot;cosmo&quot;</code>. Pass null for no theme (in this case you can use the <code>css</code> parameter to add your own styles).</p></li>
+<li><p><code>highlight</code> specifies the syntax highlighting style. Supported styles include <code>&quot;default&quot;</code>, <code>&quot;tango&quot;</code>, <code>&quot;pygments&quot;</code>, <code>&quot;kate&quot;</code>, <code>&quot;monochrome&quot;</code>, <code>&quot;espresso&quot;</code>, <code>&quot;zenburn&quot;</code>, <code>&quot;haddock&quot;</code>, and <code>&quot;textmate&quot;</code>. Pass null to prevent syntax highlighting.</p></li>
+<li><p><code>smart</code> indicates whether to produce typographically correct output, converting straight quotes to curly quotes, <code>---</code> to em-dashes, <code>--</code> to en-dashes, and <code>...</code> to ellipses. Note that <code>smart</code> is enabled by default.</p></li>
+</ul>
+<p>For example:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    theme: united
+    highlight: tango
+---</code></pre>
+<div id="custom-css" class="section level3">
+<h3>Custom CSS</h3>
+<p>You can add your own CSS to an HTML document using the <code>css</code> option:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    css: styles.css
+---</code></pre>
+<p>If you want to provide all of the styles for the document from your own CSS you set the <code>theme</code> (and potentially <code>highlight</code>) to null:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    theme: null
+    highlight: null
+    css: styles.css
+---</code></pre>
+<p>You can also target specific sections of documents with custom CSS by adding ids or classes to section headers within your document. For example the following section header:</p>
+<pre><code>## Next Steps {#nextsteps .emphasized}</code></pre>
+<p>Would enable you to apply CSS to all of it’s content using either of the following CSS selectors:</p>
+<pre><code>#nextsteps {
+   color: blue;
+}
+
+.emphasized {
+   font-size: 1.2em;
+}</code></pre>
+</div>
+</div>
+<div id="figure-options" class="section level2">
+<h2>Figure Options</h2>
+<p>There are a number of options that affect the output of figures within HTML documents:</p>
+<ul>
+<li><p><code>fig_width</code> and <code>fig_height</code> can be used to control the default figure width and height (7x5 is used by default)</p></li>
+<li><p><code>fig_retina</code> Specifies the scaling to perform for retina displays (defaults to 2, which currently works for all widely used retina displays). Note that this only takes effect if you are using knitr &gt;= 1.5.21. Set to <code>null</code> to prevent retina scaling.</p></li>
+<li><p><code>fig_caption</code> controls whether figures are rendered with captions</p></li>
+<li><p><code>dev</code> controls the graphics device used to render figures (defaults to png)</p></li>
+</ul>
+<p>For example:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    fig_width: 7
+    fig_height: 6
+    fig_caption: true
+---</code></pre>
+</div>
+<div id="mathjax-equations" class="section level2">
+<h2>MathJax Equations</h2>
+<p>By default <a href="http://www.mathjax.org/">MathJax</a> scripts are included in HTML documents for rendering LaTeX and MathML equations. You can use the <code>mathjax</code> option to control how MathJax is included:</p>
+<ul>
+<li><p>Specify “default” to use an https URL from the official MathJax CDN.</p></li>
+<li><p>Specify “local” to use a local version of MathJax (which is copied into the output directory). Note that when using “local” you also need to set the <code>self_contained</code> option to false.</p></li>
+<li><p>Specify an alternate URL to load MathJax from another location.</p></li>
+<li><p>Specify null to exclude MathJax entirely.</p></li>
+</ul>
+<p>For example, to use a local copy of MathJax:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    mathjax: local
+    self_contained: false
+---</code></pre>
+<p>To use a self-hosted copy of MathJax:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    mathjax: &quot;http://example.com/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML&quot;
+---</code></pre>
+<p>To exclude MathJax entirely:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    mathjax: null
+---</code></pre>
+</div>
+<div id="document-dependencies" class="section level2">
+<h2>Document Dependencies</h2>
+<p>By default R Markdown produces standalone HTML files with no external dependencies, using data: URIs to incorporate the contents of linked scripts, stylesheets, images, and videos. This means you can share or publish the file just like you share Office documents or PDFs. If you’d rather have keep depenencies in external files you can specify <code>self_contained: false</code>. For example:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    self_contained: false
+---</code></pre>
+<p>Note that even for self contained documents MathJax is still loaded externally (this is necessary because of it’s size). If you want to serve MathJax locally then you should specify <code>mathjax: local</code> and <code>self_contained: false</code>.</p>
+<p>One common reason keep dependencies external is for serving R Markdown documents from a website (external dependencies can be cached separately by browsers leading to faster page load times). In the case of serving multiple R Markdown documents you may also want to consolidate dependent library files (e.g. Bootstrap, MathJax, etc.) into a single directory shared by multiple documents. You can use the <code>lib_dir</code> option to do this, for example:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    self_contained: false
+    lib_dir: libs
+---</code></pre>
+</div>
+<div id="advanced-customization" class="section level2">
+<h2>Advanced Customization</h2>
+<div id="keeping-markdown" class="section level3">
+<h3>Keeping Markdown</h3>
+<p>When knitr processes an R Markdown input file it creates a markdown (md) file which is subsequently tranformed into HTML by pandoc. If you want to keep a copy of the markdown file after rendering you can do so using the <code>keep_md</code> option:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    keep_md: true
+---</code></pre>
+</div>
+<div id="includes" class="section level3">
+<h3>Includes</h3>
+<p>You can do more advanced customization of output by including additional HTML content or by replacing the core pandoc template entirely. To include content in the document header or before/after the document body you use the <code>includes</code> option as follows:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    includes:
+      in_header: header.html
+      before_body: doc_prefix.html
+      after_body: doc_suffix.html
+---</code></pre>
+</div>
+<div id="custom-templates" class="section level3">
+<h3>Custom Templates</h3>
+<p>You can also replace the underlying pandoc template using the <code>template</code> option:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    template: quarterly_report.html
+---</code></pre>
+<p>Consult the documentation on <a href="http://johnmacfarlane.net/pandoc/demo/example9/templates.html">pandoc templates</a> for additional details on templates. You can also study the <a href="https://github.com/jgm/pandoc-templates/blob/master/default.html">default HTML template</a> as an example.</p>
+</div>
+<div id="markdown-extensions" class="section level3">
+<h3>Markdown Extensions</h3>
+<p>By default R Markdown is defined as all pandoc markdown extensions with the following tweaks for backward compatibility with the markdown package:</p>
+<pre><code>+autolink_bare_uris
++ascii_identifier
++tex_math_single_backslash</code></pre>
+<p>You can enable or disable markdown extensions using the <code>md_extensions</code> option (you preface an option with <code>-</code> to disable and <code>+</code> to enable it). For example:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    md_extensions: -autolink_bare_uris+hard_line_breaks
+---</code></pre>
+<p>The above would disable the <code>autolink_bare_uris</code> extension and enable the <code>hard_line_breaks</code> extension.</p>
+<p>For more on available markdown extensions see the <a href="http://pandoc.org/README.html#pandocs-markdown">pandoc markdown specification</a>.</p>
+</div>
+<div id="pandoc-arguments" class="section level3">
+<h3>Pandoc Arguments</h3>
+<p>If there are pandoc features you want to use that lack equivilants in the YAML options described above you can still use them by passing custom <code>pandoc_args</code>. For example:</p>
+<pre><code>---
+title: &quot;Habits&quot;
+output:
+  html_document:
+    pandoc_args: [
+      &quot;--title-prefix&quot;, &quot;Foo&quot;,
+      &quot;--id-prefix&quot;, &quot;Bar&quot;
+    ]
+---</code></pre>
+<p>Documentation on all available pandoc arguments can be found in the <a href="http://johnmacfarlane.net/pandoc/README.html#options">pandoc user guide</a>.</p>
+</div>
+</div>
+<div id="shared-options" class="section level2">
+<h2>Shared Options</h2>
+<p>If you want to specify a set of default options to be shared by multiple documents within a directory you can include a file named <code>_output.yaml</code> within the directory. Note that no YAML delimeters or enclosing output object are used in this file. For example:</p>
+<p><strong>_output.yaml</strong></p>
+<pre class="yaml"><code>html_document:
+  self_contained: false
+  theme: united
+  highlight: textmate</code></pre>
+<p>All documents located in the same directory as <code>_output.yaml</code> will inherit it’s options. Options defined explicitly within documents will override those specified in the shared options file.</p>
+</div>
+<div id="html-fragments" class="section level2">
+<h2>HTML Fragments</h2>
+<p>If want to create an HTML fragment rather than a full HTML document you can use the <a href="html_fragment_format.html"><code>html_fragment</code></a> format. For example:</p>
+<pre><code>---
+output: html_fragment
+---</code></pre>
+<p>Note that there is no title or author because fragments don’t contain the standard header content that HTML documents do. HTML fragments are typically used for including snippets of HTML within larger web sites (e.g. blogs).</p>
+<p>For additional information see the article on <a href="html_fragment_format.html">HTML Fragments</a>. Note that another good option for generating content to be included in larger websites is the <a href="markdown_document_format.html"><code>md_document</code></a> format, which generates markdown. For more information on this format see the article on <a href="markdown_document_format.html">Markdown Documents</a>.</p>
+</div>
+<div id="creating-a-website" class="section level2">
+<h2>Creating a Website</h2>
+<p>It’s possible to create full websites with R Markdown using a combination of the options described above. To create a website you need to:</p>
+<ol style="list-style-type: decimal">
+<li><p>Create a shared options file (_output.yaml) to ensure common options across all pages within the site.</p></li>
+<li><p>Specify includes for common header and footer content.</p></li>
+<li><p>Specify that documents are not <code>self_contained</code> and define a common <code>lib_dir</code> for JavaScript and CSS dependencies.</p></li>
+</ol>
+<p>For example, here’s a possible _output.yaml file for a website:</p>
+<p><strong>_output.yaml</strong></p>
+<pre><code>html_document:
+  self_contained: false
+  lib_dir: libs
+  includes:
+    in_header: include/in_header.html
+    before_body: include/before_body.html
+    after_body: include/after_body.html</code></pre>
+<p>The YAML inside individual documents then only needs to specify the document title:</p>
+<pre><code>---
+title: &quot;Document Title&quot;
+---</code></pre>
+<p>This documentation website was created using R Markdown using the methodology described above. You can see it’s source code here:</p>
+<p><a href="https://github.com/rstudio/rmarkdown/tree/gh-pages" class="uri">https://github.com/rstudio/rmarkdown/tree/gh-pages</a></p>
+<p>Note that in this repository the .Rmd and .md files are the source code and the .html files were generated by calling <code>rmarkdown::render</code>. The repository also includes a <code>Makefile</code> that rebuilds the entire site.</p>
+<div id="migrating-websites-to-bootstrap-3" class="section level3">
+<h3>Migrating Websites to Bootstrap 3</h3>
+<p>The <a href="https://github.com/rstudio/rmarkdown/tree/gh-pages">R Markdown website</a> linked to above was originally created with version 0.3 of the <strong>rmarkdown</strong> package and its HTML utilized <a href="http://getbootstrap.com/2.3.2/">Bootstrap 2</a> for layout and navigation. In version 0.4 of the <strong>rmarkdown</strong> package the embedded version of Bootstrap was upgraded to <a href="http://getbootstrap.com/">version 3</a> and as a result the underlying layout and navigation HTML needed to change.</p>
+<p>If you modeled a website on the Bootstrap 2 implementation you’ll also need to migrate to Bootstrap 3 to use more recent versions of <strong>rmarkdown</strong> to generate your site (you could of course also use <a href="http://rstudio.github.io/packrat">packrat</a> or some other means of freezing package versions and continue using Boostrap 2 with an older version of the package).</p>
+<p>Here are the steps required to migrate:</p>
+<ol style="list-style-type: decimal">
+<li><p>Install the most recent version of the <strong>rmarkdown</strong> package.</p></li>
+<li><p>Remove the libs/bootstrap-2.3.2 directory</p></li>
+<li><p>Copy the relevant sections from these files into the corresponding files within your site:</p>
+<p><a href="https://github.com/rstudio/rmarkdown/blob/gh-pages/include/in_header.html">include/in_header.html</a> — css for navbar padding and scroll position offset</p>
+<p><a href="https://github.com/rstudio/rmarkdown/blob/gh-pages/include/before_body.html">include/before_body.html</a> – copy the entire menu structure then substitute the drop-downs and menu items for your site.</p></li>
+<li><p>If you used Bootstrap 2 HTML elements elsewhere within your site then read the Bootstrap 3 <a href="http://getbootstrap.com/migration/">migration guide</a> and make whatever additional changes are required.</p></li>
+<li><p>Re-generate the site by re-executing <code>rmarkdown::render</code> on all of the Rmd or md files (or just re-execute the Makefile if you have one).</p></li>
+</ol>
+</div>
+</div>
+
+
+<!-- some extra javascript for older browsers -->
+<script type="text/javascript" src="libs/polyfill.js"></script>
+
+<script>
+
+// manage active state of menu based on current page
+$(document).ready(function () {
+
+    // active menu
+    href = window.location.pathname
+    href = href.substr(href.lastIndexOf('/') + 1)
+    $('a[href="' + href + '"]').parent().addClass('active');
+
+    // manage active menu header
+    if (href.startsWith('authoring_'))
+      $('a[href="' + 'authoring' + '"]').parent().addClass('active');
+    else if (href.endsWith('_format.html'))
+      $('a[href="' + 'formats' + '"]').parent().addClass('active');
+    else if (href.startsWith('developer_'))
+      $('a[href="' + 'developer' + '"]').parent().addClass('active');
+
+});
+
+</script>
+
+<!-- disqus -->
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+
+</body>
+</html>
