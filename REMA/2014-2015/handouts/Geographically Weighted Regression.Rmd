@@ -3,7 +3,8 @@ title: "Spatial Models in R"
 author: "Maciej Beręsewicz"
 date: "15 May 2015"
 output:
-  slidy_presentation: 
+  beamer_presentation: default
+  slidy_presentation:
     css: gwrcss.css
     keep_md: yes
 ---
