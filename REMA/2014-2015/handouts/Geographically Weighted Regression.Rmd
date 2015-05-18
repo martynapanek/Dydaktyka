@@ -48,12 +48,11 @@ Waldo Tobler (1970)
 
 ## Basic spatial models 
 
-* Spatial Autocorrelation Model (SAR Lag)
-* Spatial Error Model (SAR Error)
-* Spatial Autocorrelation and Error Model (SAR Lag and Error)
+* Spatial Autocorrelation Model (SAR Lag) -- assuming autocorrelation in space
+* Spatial Error Model (SAR Error) -- assuming autocorrelation of errors in space
+* Spatial Autocorrelation and Error Model (SAR Lag and Error) -- assuming both autocorrelations
 
 ![models](models.png )
-
 
 
 ## Basic spatial models - literature
@@ -71,6 +70,12 @@ Please refer to book Bivand, R. S., Pebesma, E., & Gómez-Rubio, V. (2013). Appl
 ![models](ep2.jpg)
 
 ## Geographically weighted regression
+
+We can divide models into two groups:
+
+1. Assuming spatial stationarity - model parameters are fixed in space
+2. Assuming spatial non-stationarity - model parameters vary in space
+
 
 * Geographically weighted regression (GWR) is an exploratory technique mainly intended to indicate where non-stationarity is taking place on the map, that is where locally weighted regression coefficients move away from their global values.
 
@@ -144,7 +149,7 @@ $$
 \hat{\mathbf{\beta}}(u_i,v_i) = \mathbf{Cy},
 $$
 
-where $\mathbf{C} = (\mathbf{X}^T\mathbf{W}(i)\mathbf{X})^{-1}\mathbf{X}^T\mathbf{W(i)}$. The variance of the parameter estimates is given by 
+where $\mathbf{C} = (\mathbf{X}^T\mathbf{W}(i)\mathbf{X})^{-1}\mathbf{X}^T\mathbf{W}(i)$. The variance of the parameter estimates is given by 
 
 $$
 Var({\hat{\mathbf{\beta}}(u_i,v_i)}) = \mathbf{C}\mathbf{C}^T\sigma^2
@@ -237,9 +242,9 @@ ggplot(data = baltimore,
 
 ## Information about dataset
 
-Topic: House sales price and characteristics for a spatial hedonic regression, Baltimore, MD 1978.
-Source : Original data made available by Robin Dubin, Weatherhead School of Management, Case Western Research University, Cleveland, OH, Robin.Dubin@weatherhead.cwru.edu.
-Reference: Dubin, Robin A. (1992). Spatial autocorrelation and neighborhood quality. Regional Science and Urban Economics 22(3), 433-452.
+* Topic: House sales price and characteristics for a spatial hedonic regression, Baltimore, MD 1978.
+* Source : Original data made available by Robin Dubin, Weatherhead School of Management, Case Western Research University, Cleveland, OH, Robin.Dubin@weatherhead.cwru.edu.
+* Reference: Dubin, Robin A. (1992). Spatial autocorrelation and neighborhood quality. Regional * Science and Urban Economics 22(3), 433-452.
 
 ## Information about dataset
 
@@ -253,6 +258,9 @@ Reference: Dubin, Robin A. (1992). Spatial autocorrelation and neighborhood qual
 * AC - 1 if air conditioning, 0 otherwise
 * BMENT - 1 if basement, 0 otherwise
 * NSTOR - number of stories
+
+## Information about dataset
+
 * GAR - number of car spaces in garage (0 = no garage)
 * AGE - age of dwelling in years
 * CITCOU - 1 if dwelling is in Baltimore County, 0 otherwise
@@ -260,6 +268,7 @@ Reference: Dubin, Robin A. (1992). Spatial autocorrelation and neighborhood qual
 * SQFT - interior living space in hundreds of square feet
 * X - x coordinate on the Maryland grid
 * Y - y coordinate on the Maryland grid
+
 
 ## Simple linear regression
 
