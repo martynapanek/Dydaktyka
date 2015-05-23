@@ -1,0 +1,99 @@
+---
+title: "praca_domowa_3_orchowski"
+author: "Wojciech Orchowski"
+date: "Tuesday, May 19, 2015"
+output: pdf_document
+---
+
+
+# Regresja liniowa
+Model regresji mozemy zapisac nastepująco  
+
+\begin{displaymath}
+Y = \beta X + \epsilon
+\end{displaymath}
+
+Natomiast estymator KMNK $\beta$ określony jest następujaco
+
+\begin{displaymath}
+\hat{\beta}= (X^{T}X)^{-1}X^{T}Y.
+\end{displaymath}
+
+
+#Dane do regresji
+
+Użyjemy danych ze zbioru cars i zbudujemy model regresji **dist ~ speed**. Dodatkowo, losowo (wykorzystując
+funkcję **sample**) wybierzemy jedynie 20 obserwacji aby dokument był czytelny.
+
+
+```{r}
+car_sub <- cars[sample(1:50,20),]
+speed <- car_sub[,1]
+distance <- car_sub[,2]
+
+```
+
+Macierz $X$ wyglada następująco
+
+
+
+```{r, echo=FALSE}
+pdf.options(encoding='ISOLatin2.enc')
+m2l <- function(matr) {
+  
+      printmrow <- function(x) {
+          ret <- paste(paste(x,collapse = " & "    ),"\\\\")
+          sprintf(ret)
+}
+out <- apply(matr,1,printmrow)
+out2 <- paste("\\begin{bmatrix}",paste(out,collapse=' '),"\\end{bmatrix}")
+
+return(out2)
+}
+
+X <- cbind(matrix(1, nrow = 20),(matrix(speed)))
+Y <- matrix(distance)
+
+XtX <- t(X)%*%X
+XtY <- t(X)%*%Y
+
+B <- solve(XtX)%*%XtY
+
+```
+
+\begin{displaymath}
+\mathbf{X} = `r m2l(X)`
+\end{displaymath}
+
+W związku z tym $\hat{\beta}$ ma postać:
+
+\begin{displaymath}
+(X^{T}X)^{-1}X^{T}Y = (`r m2l(X)`^{T}`r m2l(X)`)^{-1}`r m2l(X)`^{T}`r m2l(Y)` = `r m2l(B)`
+\end{displaymath}
+
+
+Co daje nam
+
+\begin{displaymath}
+\hat{\beta}= (X^{T}X)^{-1}X^{T}Y = (`r m2l(XtX)`)^{-1}
+\end{displaymath}
+
+#Rysujemy wykres regresji
+
+Wykres przedstawia zależnośc między **dist** a **speed** oraz oszacowaną krzywą regresji.Należy użyć funkcji **plot** oraz **abline**.
+
+```{r echo = FALSE}
+reg <- lm(distance~speed)
+
+plot(x = speed, y = distance,
+     main = "Zależność między prędkością, a dystansem",
+     xlab = "Prędkość",
+     ylab = "Dystans")
+abline(reg, col = "red")
+```
+
+
+
+
+
+
