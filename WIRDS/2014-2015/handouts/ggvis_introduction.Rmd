@@ -1,0 +1,207 @@
+---
+title: "ggvis - wprowadzenie"
+author: "Maciej Beręsewicz"
+date: "24 May 2015"
+output:
+  slidy_presentation: 
+    fig_height: 3.5
+    fig_width: 3.5
+    keep_md: yes
+    widescreen: yes
+---
+
+```{r boxplot,warning=FALSE, message=FALSE,echo=FALSE}
+library(ggvis)
+library(dplyr)
+library(knitr)
+opts_chunk$set(fig.align = 'center',warning=FALSE,message=FALSE)
+```
+
+## ggvis vs ggplot2
+
+Podstawowe zmiany:
+
+* zamiast **layer, geom** -> używamy **layer_** 
+* zamiast **stat** -> używamy **compute**
+* zamiast **aes()** -> używamy **props()**
+* zamiast **ggplot()** -> używamy **ggvis()**
+* łączymy komponenty używając **%>%** zamiast **+**
+
+## ggvis - ograniczenia
+
+* brak funkcji **facet**
+* zdecydowanie mniejsza możliwość zmiany elementów wykresu w porównaniu do ggplot2
+* pakiet jest w tej chwili rozwijany
+
+## Stwórzmy pierwszy wykres - zmienna ciągła
+
+```{r boxplot2,message=FALSE}
+mtcars %>%
+  ggvis(x = ~mpg) 
+```
+
+## Stwórzmy pierwszy wykres - zmienna jakościowa
+
+```{r barplot,message=FALSE}
+mtcars %>%
+  mutate(am = as.factor(am)) %>%
+  ggvis(x = ~am) 
+```
+
+## Stwórzmy pierwszy wykres - wykres rozrzutu
+
+```{r scatter_plot}
+mtcars %>%  ggvis(~wt, ~mpg) %>% layer_points()
+```
+
+## Stwórzmy pierwszy wykres - wykres rozrzutu + regresja
+
+```{r scatter_plot_reg}
+mtcars %>%  ggvis(~wt, ~mpg) %>%  layer_points()  %>%
+  layer_model_predictions(model = "lm", se = TRUE)
+```
+
+## Stwórzmy pierwszy wykres - wykres rozrzutu + regresja (wg punktów)
+
+```{r scatter_plot_reg_group}
+mtcars %>%  mutate(cyl=as.factor(cyl)) %>% group_by(cyl) %>%
+  ggvis(~wt, ~mpg, fill=~cyl) %>% layer_points()  %>%
+  layer_model_predictions(model = "lm", se = TRUE)
+```
+
+## Stwórzmy pierwszy wykres - zmienna ilościowa - boxplot
+
+```{r boxpl,message=FALSE}
+mtcars %>%  ggvis(~wt, ~mpg) %>% 
+  layer_points() %>%
+  scale_numeric("x", domain = c(2,5))
+```
+
+## Stwórzmy pierwszy wykres - zmiana zakresu
+
+```{r boxpl2,message=FALSE}
+mtcars %>%
+  ggvis(x= ~cyl,y = ~mpg)  %>%
+  layer_boxplots()
+```
+
+## Grafika interaktywna - etykiety punktów
+
+```{r interaktywnosc}
+mtcars %>%  
+  mutate(type=rownames(.)) %>% 
+  slice(1:10) %>%
+  ggvis(~wt, ~mpg, shape= ~type) %>% 
+  layer_points() %>%
+  add_tooltip( function(x) x$type, 'hover')
+```
+
+## Grafika interaktywna - etykiety punktów (1)
+
+```{r interaktywnosc2}
+all_values <- function(x) {
+  if(is.null(x)) return(NULL)
+  paste0(names(x), ": ", format(x), collapse = "<br />")
+}
+base <- mtcars %>% ggvis(x = ~wt, y = ~mpg) %>%
+  layer_points()
+base %>% add_tooltip(all_values, "hover")
+```
+
+## Suwaki
+
+```{r suwaki}
+mtcars %>%
+  ggvis(x= ~wt,y = ~mpg)  %>%
+  layer_points(size := input_slider(1, 50, step = 5)) %>%
+  layer_smooths(span  = input_slider(0.5, 2, step = 0.1))
+```
+
+## Suwaki
+
+```{r suwaki2}
+mtcars %>%
+  ggvis(x= ~mpg) %>%
+  layer_histograms(width = input_slider(1, 10, step = 1))
+```
+
+## Podstawowe suwaki
+
+* input_checkbox(): a check-box
+* input_checkboxgroup(): a group of check boxes
+* input_numeric(): a spin box
+* input_radiobuttons(): pick one from a set options
+* input_select(): create a drop-down text box
+* input_text(): arbitrary text input
+
+## Bardziej zaawansowane suwaki
+
+```{r}
+mtcars %>% ggvis(x = ~wt) %>%
+    layer_densities(
+      adjust = input_slider(.1, 2, value = 1, step = .1, label = "Bandwidth adjustment"),
+      kernel = input_select(
+        c("Gaussian" = "gaussian",
+          "Epanechnikov" = "epanechnikov",
+          "Rectangular" = "rectangular",
+          "Triangular" = "triangular",
+          "Biweight" = "biweight",
+          "Cosine" = "cosine",
+          "Optcosine" = "optcosine"),
+        label = "Kernel")
+    )
+```
+
+## Opcje wykresów
+
+* add_axis(vis, "x")
+* add_axis(vis, "y")
+* add_legend(vis, "stroke")
+* add_legend(vis, "size")
+
+Możemy zmieniać: 
+
+* title
+* orient
+* title_offset
+* format
+* ticks
+
+i wiele innych
+
+## Opcje wykresów - przykład
+
+```{r}
+mtcars %>%
+  ggvis(x= ~wt,y = ~mpg) %>%
+  add_axis('x', title='Weight (lb/1000') %>%
+  add_axis('y', title = 'Miles/(US) gallon')
+```
+
+## Opcje wykresów - zmiana skali osi
+
+```{r}
+mtcars %>%
+  ggvis(x= ~wt,y = ~mpg) %>%
+  add_axis('x', title='Weight (lb/1000') %>%
+  add_axis('y', title = 'Miles/(US) gallon') %>%
+  scale_numeric("x", trans="log") %>%
+  scale_numeric("y", trans="log")
+```
+
+## Opcje wykresów - zmiana skali osi
+
+Wspierane typy osi:
+
+* numeric For continuous numeric values.
+* nominal For character vectors and factors.
+* ordinal For ordered factors (these presently behave the same as nominal).
+* logical For logical (TRUE/FALSE) values.
+* datetime For dates and date-times.
+
+## Źródła:
+
+* http://ggvis.rstudio.com/ggvis-basics.html 
+* http://ggvis.rstudio.com/properties-scales.html
+* http://ggvis.rstudio.com/axes-legends.html
+* https://github.com/pbiecek/TechnikiWizualizacjiDanych/blob/master/MINI_MIMUW_2014/materialy_z_wykladow_i_lab/ggvis/ggvis.Rmd
