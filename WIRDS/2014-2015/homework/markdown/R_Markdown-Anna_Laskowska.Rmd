@@ -1,0 +1,68 @@
+---
+title: "Zadanie dodatkowe - R Markdown"
+author: "Anna Laskowska"
+date: "Tuesday, May 19, 2015"
+output: pdf_document
+---
+# Regresja liniowa
+
+Modle regresji mo¿emy zapisaæ nastêpuj¹co
+$$
+Y=\beta X+\varepsilon.
+$$
+Natomiast estymator KMNK $\beta$ okreœlony jest nastêpuj¹co
+$$
+\hat{\beta}=(X^TX)^{-1}X^TY.
+$$
+
+#Dane do regresji
+
+U¿yjemy danychze zbioru ` cars` i zbudujemy model regresji ` dist ~ speed`. Dodatkowo, losowo (wykorzystuj¹c funkcjê `sample`) wybierzemy jedynie 20 obserwacji aby dokument by³ czytelny.
+```{r}
+car_sub<-cars[sample(1:50,20),]
+```
+Macierz $x$ wygl¹da nastêpuj¹co
+```{r biblioteka,echo=FALSE}
+library(MASS)
+```
+
+```{r macierze,echo=FALSE}
+car_sub<-cars[sample(1:50,20),]
+X<-(as.matrix(cbind(1,car_sub$speed)))
+Y<-as.matrix(car_sub$dist)
+pdf.options(encoding='ISOLatin2.enc')
+m21<-function(matr){
+  printmrow<-function(x){
+    ret<-paste(paste(x,collapse=" & "),"\\\\")
+    sprintf(ret)
+  }
+  out<-apply(matr,1,printmrow)
+  out2<-paste("\\begin{bmatrix}",paste(out,collapse=' '),"\\end{bmatrix}")
+  return(out2)
+}
+```
+
+$$
+X=`r m21(X)`
+$$
+W zwi¹zku z tym $\hat{\beta}$ ma nastêpuj¹c¹ postaæ
+$$
+(X^TX)^{-1}X^TY=(`r m21(X)``r m21(X)`)^{-1}`r m21(X)`^T`r m21(Y)`
+$$
+Co daje nam
+$$
+\hat{\beta}=(X^TX)^{-1}X^TY=(`r m21((t(X)%*%X))`)^{-1}`r m21(t(X)%*%Y)`=`r m21(ginv((t(X)%*%X))%*%t(X)%*%Y)`
+$$
+
+#Rysujemy wykres regresji
+
+Wykres przdstawia zalenoœæ miêdzy `dist` a `speed` oraz oszacowan¹ krzyw¹ regresji. Nale¿y u¿yæ funkcji `plot` oraz `abline`.
+
+```{r wykres, echo=FALSE}
+plot(car_sub$speed,car_sub$dist,
+     xlab="Prêdkoœæ",
+     ylab="Dystans",
+     main="Zale¿noœæ miêdzy dystansem, a prêdkoœci¹")
+z <- lm(dist ~ speed, data = car_sub)
+abline(z,col="red")
+```
