@@ -1,0 +1,97 @@
+---
+title: "Zadanie dodatkowe - R Markdown"
+author: "Maciej Beręsewicz"
+date: "19 May 2015"
+output: pdf_document
+---
+
+Proszę o odtworzenie poniższego dokumentu (w HTML lub PDF). Liczby w macierzach muszą być uzależnione od danych wylosowanych ze zbioru `cars` (bez użycia funkcji `set.seed()`). Oznacza to de facto, że będą aktualizowane za każdym razem jak nastąpi kompilacja dokumentu. 
+
+Kody proszę przesyłać przez **GitHub**.
+
+Należy użyć poniższej funkcji do wyświetlenia macierzy (Kod pochodzi z [Źródło 1](http://stackoverflow.com/questions/20749444/converting-r-matrix-into-latex-matrix-in-the-math-or-equation-environment/20751549?noredirect=1#20751549), [Źródło 2](http://stackoverflow.com/questions/20759444/knitr-r-code-within-latex-environment-in-a-markdown-document)).
+
+```{r macierz,tidy=FALSE}
+pdf.options(encoding='ISOLatin2.enc')
+
+m2l <- function(matr) {
+    printmrow <- function(x) {
+        ret <- paste(paste(x,collapse = " & "),"\\\\")
+        sprintf(ret)
+    }
+    out <- apply(matr,1,printmrow)
+    out2 <- paste("\\begin{bmatrix}",paste(out,collapse=' '),"\\end{bmatrix}")
+    return(out2)
+}
+```
+
+# Regresja liniowa 
+
+Model regresji możemy zapisać następująco
+
+$$
+\boldsymbol{Y} = \boldsymbol{\beta}\boldsymbol{X} + \boldsymbol{\epsilon}
+$$
+
+Natomiast estymator KMNK $\boldsymbol{\beta}$ określony jest następująco
+
+$$
+\hat{\boldsymbol{\beta}} = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{Y}.
+$$
+
+# Dane do regresji
+
+Użyjemy danych ze zbioru `cars` i zbudujemy model regresji `dist ~ speed`. Dodatkowo, losowo (wykorzystując funkcję `sample`) wybierzemy jedynie 20 obserwacji aby dokument był czytelny.
+
+```{r wybor_danych}
+car_sub <- cars[sample(1:50,20),]
+```
+
+Macierz $\boldsymbol{X}$ wygląda następująco
+
+$$
+\boldsymbol{X} = `r m2l(cbind(1,car_sub$speed))`
+$$
+
+W związku z tym $\hat{\boldsymbol{\beta}}$ ma następującą postać
+
+$$
+(\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{Y} = 
+(`r m2l(cbind(1,car_sub$speed))`^{T}`r m2l(cbind(1,car_sub$speed))`)^{-1}`r m2l(cbind(1,car_sub$speed))`^T `r m2l(as.matrix(car_sub$dist))`
+$$
+
+Co daje nam
+
+```{r obliczenia,echo=FALSE}
+XtX <- crossprod(cbind(1,car_sub$speed))
+XtX_1 <- solve(XtX)
+XtY <- crossprod(cbind(1,car_sub$speed),as.matrix(car_sub$dist))
+B <- XtX_1 %*% XtY
+```
+
+$$
+\hat{\boldsymbol{\beta}} =
+ (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{Y} = 
+ (`r m2l(XtX)`)^{-1}`r m2l(XtY)` = 
+`r m2l(B)`
+$$
+
+# Rysujemy wykres regresji
+
+Wykres przedstawia zależność miedzy `dist` a `speed` oraz oszacowaną przywą regresji. Należy użyć funkcji `plot` oraz `abline`.
+
+```{r wykres, echo=FALSE}
+lm <- lm(dist ~ speed, car_sub)
+plot(x = car_sub$speed,
+     y = car_sub$dist,
+     xlab = 'Prędkość',
+     ylab = 'Dystans',
+     main = 'Zależność między dystansem, a prędkością')
+abline(coef=coef(lm),col='red')
+```
+
+
+
+
+
+

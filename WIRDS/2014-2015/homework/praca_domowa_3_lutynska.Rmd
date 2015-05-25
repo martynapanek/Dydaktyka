@@ -1,0 +1,74 @@
+---
+title: "Zadanie R Markdown"
+author: "Agnieszka"
+date: "Sunday, May 24, 2015"
+output: html_document
+---
+#Regresja liniowa
+Model regresji mo¿emy zapisaæ nastêpuj±co
+
+$$
+Y=\beta X+ \epsilon
+$$
+
+Natomiast estymator KMNK **$\beta$**  okre¶lony jest nastêpuj±co
+$$
+\hat{\beta}=(X^TX)^{-1}X^TY
+$$
+
+#Dane do regresji
+U¿yjemy danych ze zbioru `cars`
+i zbudujemy model regresji `dist ~ speed`. Dodatkowo, losowo (wykorzystuj±c funkcjê `sample` wybierzemy jedynie 20 obserwacji aby dokument by³ czytelny.
+
+```{r dane_regresja,echo=TRUE, comment=''}
+car_sub <- cars[sample(1:50,20),]
+```
+```{r echo=FALSE}
+speed <- car_sub[,1]
+distance <- car_sub[,2]
+```
+
+Macierz $X$ wygl±da nastêpuj±co
+```{r echo=FALSE}
+m2l <- function(matr) {
+    printmrow <- function(X) {
+        ret <- paste(paste(X,collapse = " & "),"\\\\")
+        sprintf(ret)
+    }
+    out <- apply(matr,1,printmrow)
+    out2 <- paste("\\begin{bmatrix}",paste(out,collapse=' '),"\\end{bmatrix}")
+    return(out2)
+}
+
+macierz1=matrix(speed,20,2)
+macierz1[1:20,1]=1
+X<-macierz1
+
+Y<-matrix(distance)
+```
+$$
+\mathbf{X} = `r m2l(X)`
+$$
+
+W zwi±zku z tym $\hat{\beta}$ ma nastêpuj±c± postaæ
+$$
+(X^TX)^{-1}X^TY=(`r m2l(X)`^T`r m2l(X)`)^{-1}`r m2l(X)`^T`r m2l(Y)`
+$$
+
+Co daje nam
+$$
+\hat{\beta}= (X^{T}X)^{-1}X^{T}Y = (`r m2l(t(X)%*%X)`)^{-1}`r m2l(t(X)%*%Y)`=`r m2l(solve(t(X)%*%X)%*%(t(X)%*%Y))`
+$$
+
+#Rysujemy wykres regresji
+Wykres przedstawia zale¿no¶c miêdzy `dist` a `speed` oraz oszacowan± krzyw± regresji. Nale¿y u¿yæ funkcji `plot` oraz `abline`.
+```{r echo=FALSE}
+model <- lm(distance~speed)
+
+plot(speed,distance,
+     xlab = "Prêdko¶æ",
+     ylab = "Dystans",
+     main = "Zale¿no¶æ miêdzy dystansem a prêdko¶ci±")
+abline(model, col = "red")
+```
+
