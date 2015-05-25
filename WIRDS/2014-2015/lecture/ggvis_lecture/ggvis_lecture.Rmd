@@ -1,0 +1,22 @@
+---
+title: "ggvis"
+author: "Maciej Beręsewicz"
+date: "25 May 2015"
+output: 
+  html_document: 
+    self_contained: no
+---
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+library(ggvis)
+ggvis(cars, x= ~speed, y = ~dist) %>%
+  layer_points() %>%
+  add_tooltip( function(x) {
+    paste('Speed:',x$speed, '<br />',
+          'Distance: ', x$dist)
+  }, 'hover') %>%
+  add_axis('x', title = 'Speed (mph)') %>%
+  add_axis('y', title = 'Stopping distance (ft)')
+```
