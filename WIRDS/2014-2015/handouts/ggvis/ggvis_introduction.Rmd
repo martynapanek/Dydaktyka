@@ -13,8 +13,10 @@ output:
 ```{r boxplot,warning=FALSE, message=FALSE,echo=FALSE}
 library(ggvis)
 library(dplyr)
+library(tidyr)
 library(knitr)
 opts_chunk$set(fig.align = 'center',warning=FALSE,message=FALSE)
+load('~/Documents/Projects/RProjects/Dydaktyka/WIRDS/2014-2015/datasets/gospodarstwa.rda')
 ```
 
 ## ggvis vs ggplot2
@@ -36,93 +38,105 @@ Podstawowe zmiany:
 ## Stwórzmy pierwszy wykres - zmienna ciągła
 
 ```{r boxplot2,message=FALSE}
-mtcars %>%
-  ggvis(x = ~mpg) 
+gosp %>%
+  ggvis(x = ~wydg) 
+```
+
+## Stwórzmy pierwszy wykres - zmienna ciągła (skala logarytmiczna)
+
+```{r boxplot2_log,message=FALSE}
+gosp %>%
+  ggvis(x = ~log(wydg))
 ```
 
 ## Stwórzmy pierwszy wykres - zmienna jakościowa
 
 ```{r barplot,message=FALSE}
-mtcars %>%
-  mutate(am = as.factor(am)) %>%
-  ggvis(x = ~am) 
+gosp %>%
+  ggvis(x = ~klm) 
+```
+
+## Stwórzmy pierwszy wykres - zmienna jakościowa (poprawna skala)
+
+```{r barplot_ordinal,message=FALSE}
+gosp %>%
+  ggvis(x = ~as.factor(klm))  %>%
+  scale_ordinal('x')
 ```
 
 ## Stwórzmy pierwszy wykres - wykres rozrzutu
 
 ```{r scatter_plot}
-mtcars %>%  ggvis(~wt, ~mpg) %>% layer_points()
+gosp %>%  ggvis(~dochg, ~wydg) %>% layer_points()
 ```
 
 ## Stwórzmy pierwszy wykres - wykres rozrzutu + regresja
 
 ```{r scatter_plot_reg}
-mtcars %>%  ggvis(~wt, ~mpg) %>%  layer_points()  %>%
+gosp %>%  ggvis(~dochg, ~wydg) %>% layer_points()  %>%
   layer_model_predictions(model = "lm", se = TRUE)
 ```
 
 ## Stwórzmy pierwszy wykres - wykres rozrzutu + regresja (wg punktów)
 
 ```{r scatter_plot_reg_group}
-mtcars %>%  mutate(cyl=as.factor(cyl)) %>% group_by(cyl) %>%
-  ggvis(~wt, ~mpg, fill=~cyl) %>% layer_points()  %>%
+gosp %>%  mutate(klm=as.factor(klm)) %>% group_by(klm) %>%
+  ggvis(~dochg, ~wydg, fill=~klm) %>% layer_points()  %>%
+  layer_model_predictions(model = "lm", se = TRUE)
+```
+
+## Stwórzmy pierwszy wykres - wykres rozrzutu + regresja (wg punktów)
+
+```{r scatter_plot_reg_group2}
+gosp %>%  mutate(klm=as.factor(klm)) %>% group_by(klm) %>%
+  ggvis(~dochg, ~wydg, stroke =~klm, fill= ~ klm) %>% layer_points()  %>%
   layer_model_predictions(model = "lm", se = TRUE)
 ```
 
 ## Stwórzmy pierwszy wykres - zmienna ilościowa - boxplot
 
 ```{r boxpl,message=FALSE}
-mtcars %>%  ggvis(~wt, ~mpg) %>% 
-  layer_points() %>%
-  scale_numeric("x", domain = c(2,5))
-```
-
-## Stwórzmy pierwszy wykres - zmiana zakresu
-
-```{r boxpl2,message=FALSE}
-mtcars %>%
-  ggvis(x= ~cyl,y = ~mpg)  %>%
-  layer_boxplots()
+gosp %>%  na.omit() %>% 
+  ggvis(x=~as.factor(klm), y=~wydg) %>% layer_boxplots() 
 ```
 
 ## Grafika interaktywna - etykiety punktów
 
 ```{r interaktywnosc}
-mtcars %>%  
-  mutate(type=rownames(.)) %>% 
-  slice(1:10) %>%
-  ggvis(~wt, ~mpg, shape= ~type) %>% 
+gosp %>%  
+  slice(1:100) %>%
+  ggvis(~dochg, ~wydg) %>% 
   layer_points() %>%
-  add_tooltip( function(x) x$type, 'hover')
-```
-
-## Grafika interaktywna - etykiety punktów (1)
-
-```{r interaktywnosc2}
-all_values <- function(x) {
-  if(is.null(x)) return(NULL)
-  paste0(names(x), ": ", format(x), collapse = "<br />")
-}
-base <- mtcars %>% ggvis(x = ~wt, y = ~mpg) %>%
-  layer_points()
-base %>% add_tooltip(all_values, "hover")
+  add_tooltip( function(x) {
+    print('Dochód:', x$dochg, '\nWydatki:', x$wydg)
+    }, 'hover')
 ```
 
 ## Suwaki
 
 ```{r suwaki}
-mtcars %>%
-  ggvis(x= ~wt,y = ~mpg)  %>%
+gosp %>%
+  slice(1:1000) %>%
+  ggvis(~dochg, ~wydg) %>% 
   layer_points(size := input_slider(1, 50, step = 5)) %>%
   layer_smooths(span  = input_slider(0.5, 2, step = 0.1))
 ```
 
 ## Suwaki
 
+```{r suwaki_alpha}
+gosp %>%
+  slice(1:1000) %>%
+  ggvis(~dochg, ~wydg) %>% 
+  layer_points(opacity := input_slider(0, 1, step = 0.1))
+```
+
+## Suwaki
+
 ```{r suwaki2}
-mtcars %>%
-  ggvis(x= ~mpg) %>%
-  layer_histograms(width = input_slider(1, 10, step = 1))
+gosp %>%
+  ggvis(x= ~wydg) %>%
+  layer_histograms(width = input_slider(1, 100, step = 10)) 
 ```
 
 ## Podstawowe suwaki
@@ -137,7 +151,9 @@ mtcars %>%
 ## Bardziej zaawansowane suwaki
 
 ```{r}
-mtcars %>% ggvis(x = ~wt) %>%
+gosp %>% 
+  select(wydg) %>% na.omit() %>%
+  ggvis(x = ~wydg) %>%
     layer_densities(
       adjust = input_slider(.1, 2, value = 1, step = .1, label = "Bandwidth adjustment"),
       kernel = input_select(
@@ -172,21 +188,10 @@ i wiele innych
 ## Opcje wykresów - przykład
 
 ```{r}
-mtcars %>%
-  ggvis(x= ~wt,y = ~mpg) %>%
-  add_axis('x', title='Weight (lb/1000') %>%
-  add_axis('y', title = 'Miles/(US) gallon')
-```
-
-## Opcje wykresów - zmiana skali osi
-
-```{r}
-mtcars %>%
-  ggvis(x= ~wt,y = ~mpg) %>%
-  add_axis('x', title='Weight (lb/1000') %>%
-  add_axis('y', title = 'Miles/(US) gallon') %>%
-  scale_numeric("x", trans="log") %>%
-  scale_numeric("y", trans="log")
+gosp %>%
+  ggvis(x= ~dochg,y = ~wydg) %>%
+  add_axis('x', title='Dochody') %>%
+  add_axis('y', title = 'Wydatki')
 ```
 
 ## Opcje wykresów - zmiana skali osi
